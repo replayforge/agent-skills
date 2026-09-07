@@ -1,3 +1,8 @@
+---
+name: engineering-knowledge-capture
+description: Capture durable engineering lessons from coding, debugging, architecture, incidents, benchmarks, reviews, and AI-assisted development. Use when a session produces reusable knowledge worth organizing into Notion or another notes MCP.
+---
+
 # Engineering Knowledge Capture
 
 Use this skill when a coding, debugging, architecture, incident, benchmark, review, or AI-assisted development session produces a durable technical lesson worth preserving.
