@@ -19,24 +19,29 @@ license: MIT
 
 This skill is the workflow constitution. Role-specific and knowledge-persistence behavior lives in sibling engineering skills:
 
-- `../orchestrator/SKILL.md` — coordination, decomposition, dispatch, acceptance, and project-state governance. *(planned)*
-- `../implementation/SKILL.md` — implementation-session behavior, scope discipline, evidence-backed delivery, and blocker escalation. *(planned)*
-- `../verification/SKILL.md` — independent/adversarial verification, regression reasoning, acceptance challenge, and evidence quality. *(planned)*
+- `../orchestrator/SKILL.md` — coordination, decomposition, dispatch, acceptance, and project-state governance.
+- `../implementation/SKILL.md` — implementation-session behavior, scope discipline, evidence-backed delivery, and blocker escalation.
+- `../verification/SKILL.md` — independent/adversarial verification, regression reasoning, acceptance challenge, and evidence quality.
+- `../research/SKILL.md` — evidence gathering dispatched before a decision or implementation can proceed.
+- `../project-records/SKILL.md` — the form of the durable documents every role reads and writes.
 - `../knowledge-capture/SKILL.md` — durable engineering knowledge extraction and persistence.
 
 Do not duplicate the detailed rules of sibling skills here. This file defines how the roles interact.
 
 Coordinate the engineering process. Do not collapse orchestration, implementation, and QA into one role.
 
-This skill defines the **workflow contract** between roles. It is intentionally role-extensible: dedicated `implementation` and `verification` skills may be added later. Their internal implementation rules belong in those skills, not here.
+This skill defines the **workflow contract** between roles. The internal rules of each role belong in that role's skill, not here.
 
 ## Role model
 
-The workflow has three logical roles:
+The workflow has four logical roles. **Only one of them coordinates.**
 
-- **Orchestrator** — owns decomposition, sequencing, task briefs, dependency state, acceptance criteria, independent acceptance, and project registers.
+- **Orchestrator** — owns the **project model**, project state, the task graph and its dependency direction, sequencing, acceptance decisions, and the registers. It decides what happens next. It does not implement.
+- **Research** — removes the uncertainty that prevents the orchestrator from decomposing or sequencing safely. Returns evidence, measurements, inference, unknowns, options and costs. The `research` skill owns its behavior. It does not decide.
 - **Implementation** — constructs the requested change within the dispatched scope and reports evidence. The `implementation` skill owns implementation-session behavior without owning project-level scope or final acceptance.
-- **Verification** — independently challenges behavior, acceptance criteria, regressions, evidence quality, and silent failure modes. The `verification` skill owns independent verification behavior.
+- **Verification** — independently challenges behavior, acceptance criteria, regressions, evidence quality, and silent failure modes. The `verification` skill owns independent verification behavior. Its verdict returns to the orchestrator; it is not the end of the workflow.
+
+Research, Implementation and Verification are **dispatched** sessions. Each returns a report to the orchestrator and stops there.
 
 A session may temporarily perform more than one role only when explicitly requested, but **an artifact must not be independently certified by the same role/session that materially authored it**.
 
@@ -51,29 +56,48 @@ Never accept an executor's statement merely because it is detailed, plausible, o
 ## 1. Workflow loop
 
 ```text
-project state
-    ↓
-pre-flight
-    ↓
-split / select stage
-    ↓
-task brief
-    ↓
-dispatch → implementation / research / future specialized role
-    ↓
-executor report
-    ↓
-independent verification
-    ├── reject / rework
-    ├── blocked / decision required
-    └── accept
-          ↓
-update registers + dependency state
-          ↓
-select next ready stage
+PROJECT_START
+      │
+      ▼
+┌──────────────────────────────────────────────┐
+│  ORCHESTRATOR REVIEW                         │ ◄─────────────┐
+│  ─────────────────────────────────────────   │               │
+│  read the incoming report + registers        │               │
+│  update the project model                    │               │
+│  decompose only as far as evidence supports  │               │
+│  re-sequence; invalidate what is now stale   │               │
+│  choose the next move                        │               │
+└──────────────────────────────────────────────┘               │
+      │                                                        │
+      ├── evidence gap ──► RESEARCH ──► research report ───────┤
+      │                                                        │
+      ├── task brief ───► IMPLEMENTATION                       │
+      │                        │                               │
+      │                        ▼                               │
+      │                 implementation report                  │
+      │                        │                               │
+      │                        ▼                               │
+      │                 VERIFICATION  (independent)            │
+      │                        │                               │
+      │                        ▼                               │
+      │            ACCEPT / REJECT / BLOCKED ──────────────────┘
+      │
+      └── nothing unblocked remains in scope ──► PROJECT_DONE
 ```
 
+Three invariants hold this loop together:
+
+- **The orchestrator review is the only decision point.** Research, Implementation and Verification each end by returning a report; none of them selects or dispatches the next piece of work.
+- **Verification is never the endpoint.** Every accept, reject and block re-enters the review.
+- **Research is re-enterable at every review**, not only at the start. A gap discovered during implementation or verification is a reason to dispatch research, not a reason to guess.
+
 Never skip pre-flight for a dispatched stage. Never mark executor completion as accepted work without verification.
+
+### Decomposition depth is bounded by evidence
+
+The project is not split into tasks once. **Decompose only as far as current evidence supports**, leave more distant work coarse, and refine it at a later review when the upstream interface or boundary it depends on has actually been verified.
+
+An initial decomposition is a hypothesis. Treat it as one.
 
 ## 2. Project state and registers
 
@@ -103,25 +127,33 @@ Use an explicit lifecycle when tracking stages:
 ```text
 DRAFT
   ↓
-PREFLIGHT_VERIFIED
-  ↓
-READY
-  ↓
-DISPATCHED
-  ↓
-EXECUTOR_DONE
-  ↓
-VERIFYING
-  ├── REJECTED → READY / DISPATCHED
-  ├── BLOCKED
-  └── VERIFIED → CLOSED
+RESEARCH_REQUIRED ──► RESEARCH_DONE ──┐   (evidence gap; may recur at any point)
+                                      ↓
+                            PREFLIGHT_VERIFIED
+                                      ↓
+                                    READY
+                                      ↓
+                                  DISPATCHED
+                                      ↓
+                                EXECUTOR_DONE
+                                      ↓
+                                  VERIFYING
+                                      ├── REJECTED → READY / DISPATCHED
+                                      ├── BLOCKED  → RESEARCH_REQUIRED / decision
+                                      └── VERIFIED → CLOSED
 ```
 
-Additional states may include `SUPERSEDED` and `INVALIDATED`.
+Every transition out of `VERIFYING` passes through the orchestrator review before anything else is dispatched.
 
 `EXECUTOR_DONE` does **not** mean the stage is complete. Only independently verified work may become `VERIFIED` or `CLOSED`.
 
 Downstream work must not rely on an unverified upstream conclusion as settled fact.
+
+### `SUPERSEDED` and `INVALIDATED` are not footnotes
+
+New evidence — from research, from an implementation report, or from verification — can contradict the assumption a not-yet-dispatched stage was built on.
+
+When that happens the orchestrator must mark the affected stages `INVALIDATED` (the premise is gone) or `SUPERSEDED` (a later stage replaces it), and re-derive the dependency direction. **Do not keep a stale task brief alive to preserve the original plan.** A brief whose premise has been overturned is more dangerous than no brief, because it still reads as approved work.
 
 ## 4. Splitting work — the ladder
 
@@ -212,60 +244,53 @@ Re-verify the brief's facts and numbers yourself.
 Follow the report contract in <location>.
 ```
 
-## 8. Executor report contract
+## 8. Return contracts
 
-Require executor roles to separate evidence from interpretation:
+Every dispatched role ends the same way: **a report returned to the orchestrator, with evidence separated from interpretation.** That separation is the contract; the section list belongs to each role's skill and must not be duplicated here.
 
-```markdown
-## Stage <ID>: <outcome>
+| Role | Returns | Shape defined in |
+|---|---|---|
+| **Research** | evidence, measurements, inference, unknowns, options, costs | `../research/SKILL.md` §11 |
+| **Implementation** | the change, the evidence for it, and what it did not do | `../implementation/SKILL.md` §7 |
+| **Verification** | one verdict — ACCEPT / REJECT / BLOCKED — and what was re-run | `../verification/SKILL.md` §11 |
 
-### Verified
-- <claim> ← <commit/ref + file:symbol/line>, <what was inspected or run>
+Three requirements apply to all three:
 
-### Inference
-- <inference>
-  - Why I infer it:
-  - What would verify or falsify it:
-
-### What changed
-
-### New findings / traceability entries
-
-### What I did NOT do, and why
-- Walk every ⛔ NOT-DOING item from the brief.
-
-### Mechanical verification
-Command:
-<actual command>
-
-Exit:
-<actual exit status>
-
-Output:
-<relevant actual output>
-```
-
-Do not accept `passed`, `looks good`, or `see existing system` as evidence.
+1. **Verified and inferred are separate sections.** An inference must state what would turn it into a verification.
+2. **Mechanical claims carry actual output** — the command, the exit status, the relevant lines. `passed`, `looks good` and `see the existing system` are not evidence.
+3. **The report ends at the orchestrator.** No dispatched role selects the next piece of work, opens a new stage, or acts on its own finding outside the dispatched scope.
 
 ## 9. Independent verification
 
-Reading the report is not verification.
+Reading the report is not verification. Re-run the load-bearing assertions, in priority order, before anything is accepted.
 
-Re-run the load-bearing assertions in this order:
+The procedure — what to re-run first, how to test sample independence, what an absence claim must carry, how to challenge the acceptance criteria themselves — is `../verification/SKILL.md`. Do not maintain a second, weaker copy of it here.
 
-1. Claims that contradict the brief or prior verified state.
-2. Claims without concrete evidence.
-3. Numbers that gate a decision.
-4. Mechanical `all green` claims.
-5. Changes that affect shared foundations or multiple downstream stages.
+Two contract-level rules:
 
-When a claim depends on source behavior, inspect call sites and all relevant mechanisms rather than trusting names.
+- **`EXECUTOR_DONE` is a claim; `VERIFIED` is a conclusion.** Only re-running makes the second out of the first.
+- **An artifact must not be certified by whoever materially authored it** — including an orchestrator who specified it in enough detail that the executor had no judgement left.
 
-When repeated runs are used as evidence, check whether samples are actually independent. A single outlier compared repeatedly against one baseline is not multiple independent failures.
+## 10. Research role boundary
 
-Before declaring code dead, behavior absent, or a mechanism unused, enumerate the plausible mechanisms that could provide that behavior and eliminate all relevant ones.
+Research exists to remove the uncertainty that blocks the orchestrator, not to decide what the project does with the answer.
 
-## 10. Verification role boundary
+Dispatch research when a missing fact would change any of:
+
+```text
+decomposition        sequencing          architecture decision
+acceptance criteria  risk boundary
+```
+
+Hand it: the question, why it blocks, what an adequate answer looks like, the scope it may read, and the point at which it should stop and return.
+
+Research **must not** choose a migration strategy, fix an implementation order, build the task graph, settle the architecture, or begin implementing. Those are orchestrator decisions taken *after* reading the report — and a research session that also decides removes the only independent look at its own evidence.
+
+A research report that concludes the question cannot be answered with available evidence is a **successful** result, provided it says what is missing and what obtaining it would cost.
+
+The detailed behavior of that role lives in `../research/SKILL.md`.
+
+## 11. Verification role boundary
 
 Verification is not merely `run the tests again`.
 
@@ -282,17 +307,17 @@ Verification should be able to challenge both the implementation and the suffici
 
 Do not tell Verification to reproduce Dev's reasoning as its primary method. Independence is useful precisely because Verification may find a different failure model.
 
-Until a dedicated `verification` skill exists, the orchestrator owns acceptance verification but should preserve this boundary so QA can be inserted later without redesigning the workflow.
+The detailed behavior of that role lives in `../verification/SKILL.md`. When no separate verification session is available, the orchestrator owns acceptance verification and should follow that skill, while preserving this boundary.
 
-## 11. Implementation role boundary
+## 12. Implementation role boundary
 
 Implementation owns implementation within the brief, not project-level scope expansion or unresolved architecture decisions.
 
 If implementation exposes a missing decision, contradictory premise, or unverifiable acceptance condition, Implementation should report the blocker rather than silently choose a convenient interpretation.
 
-Until a dedicated `implementation` skill exists, task briefs must carry enough constraints to make implementation safe, but this workflow skill must not grow into a language/framework coding manual.
+The detailed behavior of that role lives in `../implementation/SKILL.md`. Task briefs must still carry enough task-specific constraints to make implementation safe, but neither this workflow skill nor the brief should grow into a language/framework coding manual.
 
-## 12. Detecting a missing skill
+## 13. Detecting a missing skill
 
 When output quality repeatedly drops in the same way, first ask whether a role/domain skill is missing rather than endlessly expanding project rules.
 
@@ -309,7 +334,7 @@ Signals include:
 
 A **skill** counters a reusable model tendency. A **project rule** records a project-specific constraint with provenance. Do not duplicate skill manuals into `rules.md`.
 
-## 13. Recording and overturns
+## 14. Recording and overturns
 
 - **Overturned conclusion:** never silently delete it. Record what was previously believed, the new evidence, and where the old reasoning failed.
 - **New rule:** record the incident or evidence that earned it.
@@ -318,7 +343,7 @@ A **skill** counters a reusable model tendency. A **project rule** records a pro
 
 Historical evidence should be version-aware. Prefer commit/ref + file + symbol/line over a naked line number when the codebase changes frequently.
 
-## 14. When not to use this workflow
+## 15. When not to use this workflow
 
 Do not impose the full workflow on exploratory prototypes where learning speed matters more than silent-error resistance.
 

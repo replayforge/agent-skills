@@ -10,11 +10,15 @@ description: Capture durable engineering lessons from coding, debugging, archite
 This skill is part of the shared engineering workflow family:
 
 - `../work-flow/SKILL.md` — project-level workflow constitution and cross-session contract.
-- `../orchestrator/SKILL.md` — orchestration and project-state governance. *(planned)*
-- `../implementation/SKILL.md` — implementation-session discipline. *(planned)*
-- `../verification/SKILL.md` — independent/adversarial verification discipline. *(planned)*
+- `../orchestrator/SKILL.md` — orchestration and project-state governance.
+- `../research/SKILL.md` — evidence gathering before a decision.
+- `../project-records/SKILL.md` — the project's own operational records, which stay in the repository.
+- `../implementation/SKILL.md` — implementation-session discipline.
+- `../verification/SKILL.md` — independent/adversarial verification discipline.
 
 Knowledge capture is orthogonal to those roles: it preserves durable lessons without becoming the project task log or duplicating role instructions.
+
+It is not a step in the workflow loop. Capture after a conclusion has been **accepted** — an overturned or unverified conclusion promoted into Knowledge is worse than none, because it leaves the project that produced it and loses the context that would have corrected it.
 
 Use this skill when a coding, debugging, architecture, incident, benchmark, review, or AI-assisted development session produces a durable technical lesson worth preserving.
 
