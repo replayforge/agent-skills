@@ -4,6 +4,10 @@ Reusable agent skills for engineering workflows.
 
 ## Skills
 
+### engineering-work-flow
+
+Coordinates multi-stage engineering work across logical Orchestrator, Dev, and QA roles. It verifies project state before dispatch, splits work into dependency-aware reviewable stages, requires evidence-backed executor reports, independently verifies load-bearing claims, and keeps findings, decisions, rules, and roadmap state distinct. The workflow is deliberately extensible so dedicated `dev` and `qa` skills can be added later without rewriting the orchestration contract.
+
 ### engineering-knowledge-capture
 
 Captures durable engineering lessons from coding, debugging, architecture, benchmarks, incidents, and reviews. It discovers an available note-capable MCP, inspects the notebook hierarchy before writing, composes the note as Markdown, and routes it into the existing knowledge structure instead of dumping session logs.
