@@ -7,7 +7,7 @@ description: >
   specialized executor roles, independently verify results, and update durable
   project registers. Use when planning, splitting, dispatching, auditing, or
   accepting engineering work across multiple sessions or agents. Designed to
-  support dedicated dev and qa role skills without embedding their implementation
+  support dedicated implementation and verification role skills without embedding their implementation
   behavior into the orchestrator.
 argument-hint: "[brief|verify|split|audit]"
 license: MIT
@@ -15,17 +15,28 @@ license: MIT
 
 # Engineering Work Flow
 
+## Related skills
+
+This skill is the workflow constitution. Role-specific and knowledge-persistence behavior lives in sibling engineering skills:
+
+- `../orchestrator/SKILL.md` — coordination, decomposition, dispatch, acceptance, and project-state governance. *(planned)*
+- `../implementation/SKILL.md` — implementation-session behavior, scope discipline, evidence-backed delivery, and blocker escalation. *(planned)*
+- `../verification/SKILL.md` — independent/adversarial verification, regression reasoning, acceptance challenge, and evidence quality. *(planned)*
+- `../knowledge-capture/SKILL.md` — durable engineering knowledge extraction and persistence.
+
+Do not duplicate the detailed rules of sibling skills here. This file defines how the roles interact.
+
 Coordinate the engineering process. Do not collapse orchestration, implementation, and QA into one role.
 
-This skill defines the **workflow contract** between roles. It is intentionally role-extensible: dedicated `dev` and `qa` skills may be added later. Their internal implementation rules belong in those skills, not here.
+This skill defines the **workflow contract** between roles. It is intentionally role-extensible: dedicated `implementation` and `verification` skills may be added later. Their internal implementation rules belong in those skills, not here.
 
 ## Role model
 
 The workflow has three logical roles:
 
 - **Orchestrator** — owns decomposition, sequencing, task briefs, dependency state, acceptance criteria, independent acceptance, and project registers.
-- **Dev** — executes implementation work within the dispatched scope and reports evidence. A future `dev` skill may define language/framework-specific implementation behavior.
-- **QA** — independently challenges behavior, acceptance criteria, regressions, and verification quality. A future `qa` skill may define testing and adversarial verification behavior.
+- **Implementation** — constructs the requested change within the dispatched scope and reports evidence. The `implementation` skill owns implementation-session behavior without owning project-level scope or final acceptance.
+- **Verification** — independently challenges behavior, acceptance criteria, regressions, evidence quality, and silent failure modes. The `verification` skill owns independent verification behavior.
 
 A session may temporarily perform more than one role only when explicitly requested, but **an artifact must not be independently certified by the same role/session that materially authored it**.
 
@@ -48,7 +59,7 @@ split / select stage
     ↓
 task brief
     ↓
-dispatch → dev / research / future specialized role
+dispatch → implementation / research / future specialized role
     ↓
 executor report
     ↓
@@ -144,9 +155,9 @@ Example:
 
 ```text
 LEGACY-01 behavior mapping ─┐
-                            ├→ ARCH-03 runtime boundary → DEV-05 implementation
+                            ├→ ARCH-03 runtime boundary → IMPL-05 implementation
 PROTO-02 protocol evidence ─┘                              ↓
-                                                        QA-06 verification
+                                                        VERIFY-06 verification
 ```
 
 Do not dispatch a downstream implementation merely because an upstream executor reported success.
@@ -254,11 +265,11 @@ When repeated runs are used as evidence, check whether samples are actually inde
 
 Before declaring code dead, behavior absent, or a mechanism unused, enumerate the plausible mechanisms that could provide that behavior and eliminate all relevant ones.
 
-## 10. QA role boundary
+## 10. Verification role boundary
 
-QA is not merely `run the tests again`.
+Verification is not merely `run the tests again`.
 
-When a dedicated QA role exists, the orchestrator should hand it:
+When a dedicated Verification role exists, the orchestrator should hand it:
 
 - the accepted requirement/decision;
 - the implementation diff or artifact;
@@ -267,19 +278,19 @@ When a dedicated QA role exists, the orchestrator should hand it:
 - explicit exclusions;
 - relevant regression surface.
 
-QA should be able to challenge both the implementation and the sufficiency of the acceptance criteria.
+Verification should be able to challenge both the implementation and the sufficiency of the acceptance criteria.
 
-Do not tell QA to reproduce Dev's reasoning as its primary method. Independence is useful precisely because QA may find a different failure model.
+Do not tell Verification to reproduce Dev's reasoning as its primary method. Independence is useful precisely because Verification may find a different failure model.
 
-Until a dedicated `qa` skill exists, the orchestrator owns acceptance verification but should preserve this boundary so QA can be inserted later without redesigning the workflow.
+Until a dedicated `verification` skill exists, the orchestrator owns acceptance verification but should preserve this boundary so QA can be inserted later without redesigning the workflow.
 
-## 11. Dev role boundary
+## 11. Implementation role boundary
 
-Dev owns implementation within the brief, not project-level scope expansion or unresolved architecture decisions.
+Implementation owns implementation within the brief, not project-level scope expansion or unresolved architecture decisions.
 
-If implementation exposes a missing decision, contradictory premise, or unverifiable acceptance condition, Dev should report the blocker rather than silently choose a convenient interpretation.
+If implementation exposes a missing decision, contradictory premise, or unverifiable acceptance condition, Implementation should report the blocker rather than silently choose a convenient interpretation.
 
-Until a dedicated `dev` skill exists, task briefs must carry enough constraints to make implementation safe, but this workflow skill must not grow into a language/framework coding manual.
+Until a dedicated `implementation` skill exists, task briefs must carry enough constraints to make implementation safe, but this workflow skill must not grow into a language/framework coding manual.
 
 ## 12. Detecting a missing skill
 
@@ -292,8 +303,8 @@ Signals include:
 | Same review problem recurs across stages | Skill for that failure class |
 | Code works but violates language/framework idiom | Language/framework skill |
 | Abstraction layers repeatedly grow without need | Anti-over-engineering skill |
-| QA repeatedly misses the same failure model | QA/testing skill |
-| Dev repeatedly misreads the same kind of implementation constraint | Dev/domain skill |
+| Verification repeatedly misses the same failure model | Verification/testing skill |
+| Implementation repeatedly misreads the same kind of implementation constraint | Implementation/domain skill |
 | Entering a new technical domain | Domain skill |
 
 A **skill** counters a reusable model tendency. A **project rule** records a project-specific constraint with provenance. Do not duplicate skill manuals into `rules.md`.
@@ -325,8 +336,8 @@ Keep governance proportional. If documentation permanently grows faster than the
 
 ## Boundaries
 
-The orchestrator coordinates and accepts work; Dev implements; QA independently challenges and verifies.
+The orchestrator coordinates and accepts work; Implementation constructs the change; Verification independently challenges and verifies it.
 
-These are **logical roles**, not necessarily permanent agents. Future `dev` and `qa` skills should plug into this contract without requiring this skill to absorb their detailed behavior.
+These are **logical roles**, not necessarily permanent agents. The `implementation` and `verification` skills should plug into this contract without requiring this skill to absorb their detailed behavior.
 
-If the orchestrator materially authors an implementation artifact, mark that artifact as requiring verification by a separate session or QA role before acceptance.
+If the orchestrator materially authors an implementation artifact, mark that artifact as requiring verification by a separate session or Verification role before acceptance.
