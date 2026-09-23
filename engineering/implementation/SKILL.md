@@ -1,14 +1,15 @@
 ---
 name: engineering-implementation
 description: >
-  Execute a dispatched engineering task as the implementation session:
-  re-verify the brief's premises before trusting them, establish facts from
-  call sites rather than names, fix at the layer all callers route through,
-  escalate missing decisions instead of inventing them, keep the temporary
-  path loud instead of silently half-correct, and return a report that
-  separates verified fact from inference with actual command output. Use when
-  you are the session doing the work under a task brief, handoff prompt, or
-  ticket. Do not use when you are coordinating, splitting, or accepting work.
+  Execute one dispatched task: re-verify the brief's premises before trusting
+  them, establish facts from call sites rather than names, fix at the layer
+  all callers converge on, escalate an open decision instead of settling it,
+  never rerun a flaky check to green, and return a report that separates
+  verified fact from inference with pasted command output. Use when working
+  under a task brief, handoff prompt or ticket, or when the user says
+  "照任務書做", "執行這份任務書", "把這個做掉", "實作這個階段",
+  "接著做", "implement this", "do this stage". Do NOT use when
+  coordinating, splitting, researching, or accepting work.
 argument-hint: "[preflight|scope|report]"
 license: MIT
 ---

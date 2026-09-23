@@ -1,14 +1,16 @@
 ---
 name: engineering-orchestrator
 description: >
-  Run a multi-stage project as the coordinating session: decide what to split
-  out and in what order, do the pre-flight before writing a task brief,
-  dispatch to executor sessions, decide acceptance, govern the project
-  registers, and notice when falling output quality means a skill is missing
-  rather than an instruction was unclear. Use when acting as the coordinating
-  session, when asked to write a task brief or handoff prompt, or when
-  deciding whether another session's result is accepted. Do not use when you
-  are the executor doing the work.
+  Run a project as the coordinating session: build the project model before
+  decomposing anything, decompose only as far as current evidence supports,
+  dispatch research when an unknown blocks a decision, write task briefs, and
+  run the review point that every report returns to. Owns the project state,
+  task graph, dependency direction, sequencing, and the ACCEPT / REJECT /
+  BLOCKED decision. Use when acting as the coordinating session, or when the
+  user says "總線", "寫任務書", "拆任務", "拆階段", "排優先序",
+  "下一步做什麼", "驗收這一輪", "這個專案現在在哪", "產生提示詞",
+  "task brief", "split this work", "what should we do next". Do NOT use when
+  you are the executor doing the actual work.
 argument-hint: "[brief|split|accept|audit]"
 license: MIT
 ---

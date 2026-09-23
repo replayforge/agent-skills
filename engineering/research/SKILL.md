@@ -1,15 +1,17 @@
 ---
 name: engineering-research
 description: >
-  Produce a research report that planning, implementation, and verification
-  can all safely build on: establish and measure the scope before analyzing
-  it, enumerate sets by structural role rather than by name or directory,
-  keep every estimate visible next to the measurement that replaced it,
-  separate measured fact from inference in dedicated sections, bound impact
-  by tracing to the consumption point, and route unanswerable questions to a
-  named owner. Use when dispatched to investigate a legacy system, evaluate
-  options, establish a baseline, or close an evidence gap. Do not use to make
-  the decision the research informs.
+  Investigate a dispatched question and return evidence, not decisions:
+  measure the scope before analyzing it, enumerate sets by structural role
+  rather than by name or directory, keep every estimate beside the
+  measurement that replaced it, keep inference in its own section, bound
+  impact by tracing to the consumption point, and route unanswerable
+  questions to a named owner. Use when investigating a legacy system,
+  establishing a baseline, closing an evidence gap, or evaluating options —
+  or when the user says "先去查", "調查一下", "盤點", "摸清楚",
+  "現況分析", "這個要怎麼查", "有幾種做法", "investigate", "survey",
+  "evaluate the options". Do NOT use to pick the option, set the sequence,
+  build the task graph, or start implementing.
 argument-hint: "[scope|survey|evaluate|report]"
 license: MIT
 ---

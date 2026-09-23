@@ -1,14 +1,16 @@
 ---
 name: engineering-work-flow
 description: >
-  Coordinate multi-stage engineering work as the orchestration layer: inspect the
-  real project state before dispatch, split work into independently reviewable
-  stages, write evidence-backed task briefs and handoff prompts, route work to
-  specialized executor roles, independently verify results, and update durable
-  project registers. Use when planning, splitting, dispatching, auditing, or
-  accepting engineering work across multiple sessions or agents. Designed to
-  support dedicated implementation and verification role skills without embedding their implementation
-  behavior into the orchestrator.
+  The workflow constitution for multi-session engineering: the closed loop
+  (Orchestrator → Research / Implementation → Verification → Orchestrator),
+  four role boundaries, the stage lifecycle, the project registers, and the
+  return contract every dispatched role owes. Load it alongside whichever
+  role skill applies — it defines how the roles interact, not how any one of
+  them behaves. Use when setting up or explaining the workflow, when a
+  handoff or a role boundary is unclear, or when the user says "workflow",
+  "這套流程怎麼跑", "角色怎麼分", "誰負責什麼", "階段怎麼定義",
+  "交接要給什麼". Do NOT use as a substitute for the role skill you are
+  actually acting as.
 argument-hint: "[brief|verify|split|audit]"
 license: MIT
 ---

@@ -10,6 +10,7 @@ Engineering-oriented skills are grouped under a shared namespace. The workflow i
 
 ```text
 engineering/
+├── help/                 # start here
 ├── work-flow/
 ├── knowledge-capture/
 ├── research/
@@ -18,6 +19,10 @@ engineering/
 ├── orchestrator/
 └── project-records/
 ```
+
+#### engineering/help
+
+Entry point: which of the seven skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
 
 #### engineering/work-flow
 
@@ -86,11 +91,39 @@ The loop is the point. The orchestrator is the **only** decision point: Research
 
 Decomposition is progressive: split only as far as current evidence supports, keep distant work coarse, and refine a band only once the boundary it depends on has been verified.
 
-## Zed
+## Install
 
-Zed loads skills from `~/.agents/skills/` globally or `<worktree>/.agents/skills/` per project. Copy or symlink the desired skill folder into one of those locations.
+```bash
+git clone https://github.com/replayforge/agent-skills.git
+cd agent-skills
+./install.sh --list       # what would be linked, changes nothing
+./install.sh              # symlink into every target directory that exists
+./install.sh --uninstall  # remove only the links that point at this repo
+```
 
-Zed can also import a skill from a GitHub Markdown URL with the command palette action `agent: create skill from url`. For example, import `engineering/knowledge-capture/SKILL.md` or `engineering/work-flow/SKILL.md`.
+Skill loaders expect **one flat directory per skill, named exactly as the `name:` field in its frontmatter**. This repo groups skills under `engineering/` for readability, so installing is a flatten plus a symlink:
+
+```text
+engineering/orchestrator/          name: engineering-orchestrator
+    → ~/.claude/skills/engineering-orchestrator
+    → ~/.agents/skills/engineering-orchestrator
+```
+
+⚠ Copying `engineering/orchestrator/` in as-is does **not** work — the directory would be named `orchestrator` while the skill declares itself `engineering-orchestrator`. Use the script, or rename by hand.
+
+Symlinks rather than copies, so `git pull` updates every install at once. The script refuses to overwrite anything that is not a symlink, and `--uninstall` only removes links pointing back into this clone.
+
+| Target | Used by |
+|---|---|
+| `~/.claude/skills/` | Claude Code, globally |
+| `~/.agents/skills/` | Zed, globally |
+| `<worktree>/.claude/skills/`, `<worktree>/.agents/skills/` | per project — symlink by hand if you want a subset |
+
+Zed can also import a single skill from a GitHub Markdown URL with the command palette action `agent: create skill from url`.
+
+### Invoking
+
+Skills load on their own from the `description:` field, which lists the situations and phrases that should trigger each one. They can also be named explicitly — `/engineering-orchestrator`, `/engineering-research`. Start with `engineering-help` if you are not sure which applies.
 
 A session normally loads `work-flow` plus the one role skill it is acting as. Loading all four at once is possible but dilutes the role boundary that makes the split useful.
 

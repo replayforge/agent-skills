@@ -1,6 +1,15 @@
 ---
 name: engineering-knowledge-capture
-description: Capture durable engineering lessons from coding, debugging, architecture, incidents, benchmarks, reviews, and AI-assisted development. Use when a session produces reusable knowledge worth organizing into Notion or another notes MCP.
+description: >
+  Capture a durable engineering lesson into Notion or another notes MCP:
+  discover the notebook hierarchy before writing, reuse an existing topic
+  instead of inventing a category, and persist the reusable conclusion rather
+  than the session log. Capture only after a conclusion has been accepted.
+  Use when a coding, debugging, architecture, incident, benchmark or review
+  session produces a lesson worth keeping, or when the user says "記下來",
+  "寫進 Notion", "這個值得記", "存成筆記", "整理成知識", "capture this",
+  "write this up". Do NOT use for the project's own operational records —
+  those stay in the repository.
 ---
 
 # Engineering Knowledge Capture

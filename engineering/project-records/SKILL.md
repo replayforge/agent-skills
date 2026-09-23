@@ -1,14 +1,16 @@
 ---
 name: engineering-project-records
 description: >
-  Write the durable markdown that crosses sessions — registers, task briefs,
-  result reports, indexes — so a different role in a different session can
-  find the right entry by grep and tell whether it is still true. Covers
-  stable ID schemes as search keys, append-only ordering, scannable index
-  tables, closed status vocabularies, placing warnings where the search
-  lands, keeping overturned conclusions without misleading the next reader,
-  and guarding the parts that rot with mechanical checks. Use when creating
-  or editing any project document another session will read.
+  Write the durable markdown that crosses sessions so another role can find
+  the right entry by grep and tell whether it is still true: stable IDs that
+  double as search keys, append-only ordering, scannable index tables, closed
+  status vocabularies, keeping overturned conclusions without misleading the
+  next reader, putting a warning at every point a search can land, and a
+  mechanical check on the parts that rot. Use when creating or editing any
+  document another session will read, or when the user says
+  "這份 md 該怎麼寫", "文件怎麼整理", "怎麼搜尋這些文件", "編號怎麼定",
+  "findings 要怎麼記", "readme 要寫什麼", "register", "索引". Do NOT use to
+  decide what belongs in which register — that is the workflow constitution.
 argument-hint: "[register|index|brief|report|audit]"
 license: MIT
 ---

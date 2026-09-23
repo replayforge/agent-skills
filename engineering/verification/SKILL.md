@@ -1,15 +1,17 @@
 ---
 name: engineering-verification
 description: >
-  Independently and adversarially verify someone else's engineering result:
-  re-run the load-bearing assertions instead of reading the report, refuse
-  green that was obtained by rerunning, check whether repeated samples are
-  actually independent, demand the previous version's number beside every
-  improved metric, require an enumeration behind every absence claim, and
-  challenge the acceptance criteria themselves rather than reproducing the
-  implementer's reasoning. Use when reviewing, accepting, auditing, or
-  challenging a result report, diff, benchmark, or acceptance run. Do not use
-  to verify work you materially authored.
+  Independently challenge someone else's result: re-run the load-bearing
+  assertions instead of reading the report, refuse green that was obtained by
+  rerunning, test whether repeated samples are actually independent, demand
+  the previous value beside every improved metric, require an enumeration
+  behind every absence claim, and challenge the acceptance criteria
+  themselves. Returns one verdict — ACCEPT / REJECT / BLOCKED — to the
+  orchestrator. Use when reviewing, auditing or accepting a result report,
+  diff, benchmark or acceptance run, or when the user says "驗證", "驗收",
+  "複查", "幫我確認", "這份報告可信嗎", "這個真的跑過嗎", "挑戰這個結論",
+  "verify this", "challenge this", "is this actually green". Do NOT use to
+  verify work you materially authored, and do not fix what you find.
 argument-hint: "[accept|challenge|audit]"
 license: MIT
 ---
