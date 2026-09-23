@@ -167,6 +167,27 @@ That paragraph is the single highest-value thing in a docs README.
 
 ---
 
+## 5b. Anchor every edit to a shared register
+
+A register is written by several roles, sometimes at the same time. An edit
+that replaces content by position, or that rewrites the whole file, will
+silently destroy a concurrent edit and leave no trace of what was lost.
+
+→ **Match on the exact text you intend to replace, assert it is present
+exactly once, and abort if it is not.** A failed assertion means the file
+changed under you — which is information, not an obstacle.
+
+> A register edit aborted because its anchor no longer matched. The reason:
+> another session had rewritten those lines forty seconds earlier and was
+> still mid-edit, having written two forward references to sections it had
+> not yet added. A whole-file rewrite would have destroyed that work and
+> produced a clean-looking result.
+
+Two tells that a file is being written right now:
+
+- a reference pointing at a heading that does not exist yet;
+- a status marker changed without the section that explains it.
+
 ## 6. Put the warning where the search lands
 
 A caveat at the top of a section protects only readers who arrive at the top.

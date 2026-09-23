@@ -248,6 +248,34 @@ Only then dispatch. **Questions 2 through 8 are the ones that get skipped**,
 because question 1 feels like the answer and the plan already exists. Most of
 the value of running a loop instead of a waterfall is lost right there.
 
+### Dispatching more than one thing at once
+
+Before running two sessions concurrently, confirm their **write surfaces are
+disjoint**. Code can usually be partitioned by scope. **The registers cannot**
+— every role writes findings, state and roadmap, so concurrent dispatch always
+means concurrent register writes.
+
+Three incidents in the reference project, each a different shape:
+
+| What happened | How it surfaced |
+|---|---|
+| A commit with `git add -A` swept another session's in-progress files in, under a message describing something else — and the build was red at that moment | Only because the other session was still running and noticed |
+| A whole directory of files was deleted by an unidentified actor, showing as pending deletions nobody could attribute | `git status`, days later |
+| Two sessions edited the same register seconds apart; the second would have overwritten a half-written section | Only because the edit **asserted its anchor text was still present** and aborted |
+
+→ Practical rules:
+
+1. **Never `git add -A` in a shared worktree.** Stage paths explicitly.
+2. **Serialize register writes through yourself**, or require every edit to be
+   anchored (§7) so a clobber fails loudly instead of silently succeeding.
+3. **A measurement taken in a shared worktree assumes the files did not change
+   during it.** That is an assumption; require it stated, not assumed.
+4. **A forward reference to a section that does not exist yet means someone is
+   writing right now.** Stop and ask before touching that file.
+
+⚠ Two sessions reaching the same conclusion independently is corroboration and
+is worth having. Two sessions *writing* it simultaneously is not.
+
 ### Accepting
 
 `EXECUTOR_DONE` is not `VERIFIED`. Reading the report is not verification.
