@@ -6,8 +6,9 @@
 # `engineering/` for readability, so installing is a flatten + symlink:
 #
 #   engineering/orchestrator/  (name: engineering-orchestrator)
-#       → ~/.claude/skills/engineering-orchestrator
-#       → ~/.agents/skills/engineering-orchestrator
+#       → ~/.claude/skills/engineering-orchestrator   Claude Code
+#       → ~/.codex/skills/engineering-orchestrator    Codex CLI
+#       → ~/.agents/skills/engineering-orchestrator   Zed
 #
 # Symlinks, not copies: `git pull` updates every install at once.
 #
@@ -18,7 +19,7 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGETS=("$HOME/.claude/skills" "$HOME/.agents/skills")
+TARGETS=("$HOME/.claude/skills" "$HOME/.codex/skills" "$HOME/.agents/skills")
 MODE="${1:-install}"
 
 # name: field of a SKILL.md — the directory name the loader expects

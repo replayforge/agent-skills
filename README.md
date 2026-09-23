@@ -105,8 +105,9 @@ Skill loaders expect **one flat directory per skill, named exactly as the `name:
 
 ```text
 engineering/orchestrator/          name: engineering-orchestrator
-    → ~/.claude/skills/engineering-orchestrator
-    → ~/.agents/skills/engineering-orchestrator
+    → ~/.claude/skills/engineering-orchestrator     Claude Code
+    → ~/.codex/skills/engineering-orchestrator      Codex CLI
+    → ~/.agents/skills/engineering-orchestrator     Zed
 ```
 
 ⚠ Copying `engineering/orchestrator/` in as-is does **not** work — the directory would be named `orchestrator` while the skill declares itself `engineering-orchestrator`. Use the script, or rename by hand.
@@ -116,6 +117,7 @@ Symlinks rather than copies, so `git pull` updates every install at once. The sc
 | Target | Used by |
 |---|---|
 | `~/.claude/skills/` | Claude Code, globally |
+| `~/.codex/skills/` | Codex CLI, globally |
 | `~/.agents/skills/` | Zed, globally |
 | `<worktree>/.claude/skills/`, `<worktree>/.agents/skills/` | per project — symlink by hand if you want a subset |
 
