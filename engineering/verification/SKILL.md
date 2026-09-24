@@ -5,7 +5,8 @@ description: >
   assertions instead of reading the report, refuse green that was obtained by
   rerunning, test whether repeated samples are actually independent, demand
   the previous value beside every improved metric, require an enumeration
-  behind every absence claim, and challenge the acceptance criteria
+  behind every absence claim, distrust any finding whose search key was a
+  name rather than the thing itself, and challenge the acceptance criteria
   themselves. Returns one verdict — ACCEPT / REJECT / BLOCKED — to the
   orchestrator. Use when reviewing, auditing or accepting a result report,
   diff, benchmark or acceptance run, or when the user says "驗證", "驗收",
@@ -165,7 +166,41 @@ exist and then doubting themselves.
 
 ---
 
-## 6. Absence claims need an enumeration
+## 6. A name is not the thing
+
+Every search key you type is a **name** someone chose. The thing you are
+looking for does not have to carry it.
+
+> A pattern anchored on `errorType\s*==` found 7 sites and two distinct error
+> codes. The population was 8 sites and **four** codes — one call site wrote
+> `if (err === 210 || err === 4130)`. The variable was named `err`. The claim
+> "the population is only these two values" was built on a naming accident.
+
+Three shapes of the same mistake, all from one day of one project, all by
+someone who ran real commands and read the output correctly:
+
+| Anchored on | Claimed | Actually |
+|---|---|---|
+| **File names** (`find -iname "*net*"`) | "this framework has no network layer" | It had one — and it was the mount point for the entire protocol layer |
+| **Name shape** ("the 6 with an underscore") | "fixing the character class recovers 6" | It recovered **1**; the other 5 were missed for a different reason. The grouping was by spelling, not by cause |
+| **Variable name** (`errorType`) | "the population is 2 values" | 4 values, 8 sites |
+
+→ **Search for the thing by its value or its structure, not by its label.**
+Looking for error codes? Search the numeric literals, not the variable that
+holds them. Looking for a network layer? Search `WebSocket|fetch(|XMLHttpRequest`,
+not filenames containing `net`.
+
+→ When a name *is* the only handle you have, **state it as the population
+definition** — "sites where the literal `errorType` is compared", not "the
+error-code sites" — so the next reader can see what the count excludes.
+
+⚠ This one does not feel like guessing. The command ran, the output was real,
+the reading was correct. The defect is upstream of all of that, in the choice
+of search key.
+
+---
+
+## 7. Absence claims need an enumeration
 
 "Dead code", "never called", "unreachable", "that mechanism isn't used",
 "the field is unused" — for each, require the answer to:
@@ -185,7 +220,7 @@ to a wrong conclusion makes it more credible and much harder to overturn.
 
 ---
 
-## 7. Generalization needs a denominator
+## 8. Generalization needs a denominator
 
 Before accepting a stated limit ("X is unattainable across processes", "this
 can't be made deterministic"), ask **how many units failed out of how many**.
@@ -198,7 +233,7 @@ mechanism. Require the mechanism, or downgrade the claim.
 
 ---
 
-## 8. Verify the acceptance criteria, not only the result
+## 9. Verify the acceptance criteria, not only the result
 
 The acceptance steps are themselves an artifact under review.
 
@@ -226,7 +261,7 @@ Also ask of each criterion:
 
 ---
 
-## 9. The apparatus must not disturb its object
+## 10. The apparatus must not disturb its object
 
 Verification tooling is under review too.
 
@@ -248,7 +283,7 @@ that the check being run and the failure being claimed are at the same layer.
 
 ---
 
-## 10. Silence is a finding
+## 11. Silence is a finding
 
 Read for what the report does *not* say:
 
@@ -260,11 +295,11 @@ Read for what the report does *not* say:
 | An inference section that is empty | Inferences were written into the verified section |
 | No "where this process was wrong" content, or "everything was fine" | That section was skipped |
 | A deferred item with no reopen condition | It is forgotten, not deferred |
-| A behavior flag exercised only in its default position | §8, and it is usually the non-default branch that touches money |
+| A behavior flag exercised only in its default position | §9, and it is usually the non-default branch that touches money |
 
 ---
 
-## 11. Verdicts
+## 12. Verdicts
 
 **You are not the end of the workflow.** Your verdict returns to the
 orchestrator, which decides what happens next:

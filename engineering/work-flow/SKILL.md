@@ -254,7 +254,7 @@ Every dispatched role ends the same way: **a report returned to the orchestrator
 |---|---|---|
 | **Research** | evidence, measurements, inference, unknowns, options, costs | `../research/SKILL.md` §11 |
 | **Implementation** | the change, the evidence for it, and what it did not do | `../implementation/SKILL.md` §7 |
-| **Verification** | one verdict — ACCEPT / REJECT / BLOCKED — and what was re-run | `../verification/SKILL.md` §11 |
+| **Verification** | one verdict — ACCEPT / REJECT / BLOCKED — and what was re-run | `../verification/SKILL.md` §12 |
 
 Three requirements apply to all three:
 
