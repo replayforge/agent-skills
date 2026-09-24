@@ -288,6 +288,48 @@ assertions yourself is fine. But if you materially authored the artifact —
 including by specifying it in enough detail that the executor had no
 judgment left — you cannot be its independent verifier. Say so and route it.
 
+Make that call explicitly, per round. **Re-run it yourself** only when *all*
+of these hold:
+
+```text
+the deliverable is evidence or documentation, not code that ships
+every load-bearing claim re-runs as one command  (count / diff / byte-compare / set-compare)
+no build step is required                        (no cargo, no npm, no container)
+you did not materially author it                 (the brief fixed the facts to cover,
+                                                  the executor chose the wording and the conclusions)
+```
+
+**Dispatch a verification session** when *any* of these hold:
+
+| Trigger | Why it defeats self-verification |
+|---|---|
+| The change touches shipping code | The build has to run, and you must prove the *new* assertion can fail — not just that something failed |
+| Acceptance needs a judgment of **correctness**, not reproducibility | Re-running proves the number reproduces; it says nothing about whether the conclusion holds |
+| You wrote the artifact, or specified it so tightly the executor had no judgment | No independence left |
+| It touches a financial, protocol or security boundary | The cost of a wrong accept is asymmetric |
+| The verdict would change project direction | Nobody should both propose and approve |
+
+> ⭑ **Evidence for the split.** In one day of the reference project, 16 rounds
+> were re-run by the orchestrator and 2 went to separate sessions. All 16
+> self-verified rounds were sound — and most of them still ended with
+> "the executor was right, the orchestrator was wrong." Every one of them met
+> the four conditions above.
+>
+> **But the one round that touched shipping code found four defects only
+> because a separate session ran it** — and the most important was that *the
+> orchestrator's own acceptance clause was structurally unable to fail*.
+> Following it literally produced a green that proved nothing. **That is not
+> findable by the person who wrote the clause.**
+>
+> Twice that same day a stage was dispatched to two sessions *by mistake*.
+> Both times the duplicate became an independent cross-check with zero
+> contradictions, and both times it was stronger evidence than either round's
+> own report. Duplicate dispatch is an incident — but it shows what the second
+> pair of eyes is actually buying.
+
+⚠ **When you cannot tell which side it falls on, dispatch.** The cost of one
+extra round is knowable. The cost of a false accept is not.
+
 **What a rejection is against.** Reject the claim, naming what you ran and
 what you got. Do not reject the report.
 
