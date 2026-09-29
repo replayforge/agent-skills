@@ -212,6 +212,38 @@ Write *why* each exclusion is excluded, or the executor reads it as an
 oversight and helpfully fixes it. Then require the report to walk that list
 item by item.
 
+### An acceptance clause must be able to go red
+
+Both outcomes have to be reachable, and the clause has to measure the
+dimension that actually fails. Five shapes, every one of them written by an
+orchestrator and found by the executor or the verifier rather than by the
+author:
+
+| Shape | How it reads | Why it cannot discriminate |
+|---|---|---|
+| **Always green** | "output pasted", "the tool was run", "the ⛔ untouched paths were untouched", "cite at least one counter-example" when the brief already handed over two, or an **OR** whose two branches union to the universe | Satisfied before work starts, or satisfiable by every possible execution. Pasting is an *action*, not a criterion |
+| **Always red** | anything measuring shared state the executor does not own — a whole worktree others also write to, a commit range spanning other authors — or a clause contradicting a hard requirement elsewhere in the same brief | No permitted execution satisfies it, so the executor quietly substitutes a different command and does not mention it. Worse than having no clause |
+| **Non-deterministic** | "no conflict against the baseline", "at most N commits behind" | The artifact is fixed and the answer still moves: one artifact gave four different answers in a day. Pin the executor to a commit and ask only about that tree |
+| **Wrong dimension** | a string count standing in for a structural property; a text pattern policing a *meaning*; "you ran the three commands I gave you" when the risk is the fourth one I didn't; "every table cell is filled"; "the criterion is your own" | Binary, both outcomes reachable — and it goes **green on a wrong answer**. The most frequent and most expensive shape. A behavior enforced by two independent gates needs one clause per gate |
+| **Missing dimension** | nothing at all covers the thing that broke | The defect is in the *checklist*, not in any clause: every clause passes and the result is still wrong. Reviewing clause by clause cannot find this one |
+
+Three questions per clause, and a fourth for the list as a whole:
+
+1. **Name a concrete situation in which this goes red.** Can't ⇒ always green.
+2. **Is it satisfiable while obeying every other hard requirement here?**
+3. **Is the quantity it measures the one that actually fails?**
+4. **For every place this round is authorized to change, is there a clause
+   checking it was changed *correctly*?** Prohibitions guard the boundary;
+   only this second kind goes red on a real defect. In half the observed
+   cases the prohibition column was full and this one was empty.
+
+→ **Every sentence in a report or a commit message is itself an unverified
+clause.** A commit claiming "comments only, no behavior change" needs
+"non-comment lines in the diff == 0", or nothing checks it.
+
+→ A number pre-computed in the brief exists for the executor to *overturn*.
+The same number inside an acceptance clause is the answer written on the exam.
+
 ---
 
 ## 5. The review point — where every cycle returns

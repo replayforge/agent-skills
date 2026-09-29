@@ -218,6 +218,27 @@ oddly** — "the missing close button must be a deliberate forced-input gate" �
 treat that as a defect signal, not as supporting context. A story attached
 to a wrong conclusion makes it more credible and much harder to overturn.
 
+### A zero needs a positive control
+
+§6 is about choosing the wrong search key. This is the failure one level up:
+the key can be right and the **criterion as a whole** still be broken —
+wrong population, bad escaping, an encoding mismatch, a truncated path — and
+every one of those returns the same clean `0`.
+
+> **Require the same criterion, unchanged, against an input already known to
+> produce a result.** One round asked which components depended on a given
+> library and got none; the same query aimed at a second library returned one
+> dependent. That second answer is what makes the first one evidence rather
+> than a blank.
+
+This is not only about zero. Any absolute count needs to be shown reachable
+by the same method from a case whose answer you already know. Without the
+control you cannot separate *nothing is there* from *nothing was sampled*.
+
+⚠ Demand it of yourself when you are the one producing the count. A round
+that proposed this very rule shipped its own "no failures" claim with no
+control attached to it.
+
 ---
 
 ## 8. Generalization needs a denominator
