@@ -19,12 +19,13 @@ engineering/
 ├── orchestrator/
 ├── project-records/
 ├── stage-status/         # live board + stage_status.py
-└── stage-next/           # advance one orchestrator turn
+├── stage-next/           # advance one orchestrator turn
+└── stage-run/            # launch ready stages as background sessions
 ```
 
 #### engineering/help
 
-Entry point: which of the nine skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
+Entry point: which of the ten skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
 
 #### engineering/work-flow
 
@@ -73,6 +74,10 @@ A live stage board: which stages are running, waiting to be dispatched, waiting 
 #### engineering/stage-next
 
 Advances the project by one orchestrator turn: reads the stage board, takes every move that belongs to the orchestrator in a fixed order — record verdicts, self-accept only what re-runs as one command, remove merged worktrees, write the next brief and prompt — and stops at the first thing that needs the user. It never dispatches sessions and never settles an open decision.
+
+#### engineering/stage-run
+
+Launches every stage that is ready as its own background agent session (`claude --bg`), using the prompt file saved beside each brief. Applies concurrency rules — one code stage at a time, one merge stage at a time, a total cap — and lists what it held back and why. A running stage whose kind it cannot read counts as code, so it can only ever hold a launch back.
 
 ## Role model
 

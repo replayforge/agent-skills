@@ -56,6 +56,7 @@ Standard library only. Nothing is written.
 | Verdict register | rows `\| <N> \|` in `docs/tasks/README.md` carrying ✅／🔴／⏸ + **ACCEPT／REJECT／BLOCKED** | `register` (or `null`), `verdict_marker` (regex) |
 | Old stages with no branch | shown | `hide_branchless_below: <N>` |
 | Stall threshold | 60 minutes without a file change | `stale_minutes` |
+| Live sessions | `claude agents --json` — a session named `s<N>`／`s<N>v` counts as running even before its worktree exists | `session_lister` (or `null`) |
 
 The register is needed because a stage the orchestrator accepted itself has
 no verdict file — only the register row says it is done.
@@ -102,8 +103,9 @@ purpose.
 
 ## What it cannot see
 
-- ⚠ **A session that is open but has not created its worktree** shows as
-  `pending dispatch`. When it matters, ask.
+- ⚠ **A session opened outside the session lister** (an IDE's own agent panel)
+  that has not created its worktree yet shows as `pending dispatch`. When it
+  matters, ask.
 - ⚠ **A fresh worktree's change time is its creation time.** "Changed 1 min
   ago" means "alive or just created", not "making progress".
 - ⚠ **A deleted worktree directory** (git marks it prunable) is treated as no

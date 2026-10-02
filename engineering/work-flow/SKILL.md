@@ -242,7 +242,7 @@ The NOT-DOING list is a hard scope boundary. Give the reason for each exclusion 
 
 ### Handoff prompt
 
-The brief is the specification; the handoff prompt is only the entry point.
+The brief is the specification; the handoff prompt is only the entry point. **Save it as a file beside the brief** (`stage-<N>-<slug>-prompt.md`, verifier `…-verify-prompt.md`) so it can be re-read, re-dispatched or launched by `../stage-run/SKILL.md` — a prompt that only ever existed in a chat window cannot be audited.
 
 ```text
 Read <brief path> and execute it in the assigned role.

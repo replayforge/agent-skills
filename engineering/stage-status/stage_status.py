@@ -38,8 +38,12 @@ DEFAULTS = {
     # their state cannot be derived, so they are hidden unless --all.
     "hide_branchless_below": 0,
     "stale_minutes": 60,
+    # Lists live agent sessions as JSON [{"name": ..., "status": ...}]. A session
+    # named after a stage branch counts as running even before it creates its
+    # worktree. Set to null to disable.
+    "session_lister": ["claude", "agents", "--json"],
 }
-FILE = re.compile(r"^stage-(\d+)-.+?(-verify-result|-verify|-result)?(-[A-Z])?\.md$")
+FILE = re.compile(r"^stage-(\d+)-.+?(-verify-result|-verify-prompt|-verify|-result|-prompt)?(-[A-Z])?\.md$")
 SKIP_DIRS = {".git", "target", "node_modules", "dist", "build", ".venv"}
 OPEN = ("pending dispatch", "running", "verify pending dispatch", "verifying",
         "done, awaiting acceptance")
@@ -127,6 +131,17 @@ def activity(repo, path):
     return dirty, (int((time.time() - newest) / 60) if newest else None)
 
 
+def sessions(cfg):
+    """{name: status} of live agent sessions; empty if the lister is unavailable."""
+    if not cfg.get("session_lister"):
+        return {}
+    try:
+        r = subprocess.run(cfg["session_lister"], capture_output=True, text=True, timeout=30)
+        return {a["name"]: a.get("status", "") for a in json.loads(r.stdout or "[]") if a.get("name")}
+    except Exception:
+        return {}
+
+
 def merged(repo, branch, main):
     return subprocess.run(["git", "-C", repo, "merge-base", "--is-ancestor", branch, main],
                           capture_output=True).returncode == 0
@@ -136,6 +151,7 @@ def board(repo, cfg, show_all=False):
     main = cfg["main_branch"]
     branches = set(git(repo, "for-each-ref", "--format=%(refname:short)", "refs/heads").splitlines())
     wts = worktrees(repo)
+    live = sessions(cfg)
     reg = registered(repo, cfg)
     main_files = files_on(repo, main, cfg["tasks_dir"])
     ex = re.compile("^" + re.escape(cfg["executor_branch"]).replace(r"\{n\}", r"(\d+)") + "$")
@@ -161,7 +177,7 @@ def board(repo, cfg, show_all=False):
         unmerged = [b for b in (e, v) if b in branches and not merged(repo, b, main)]
 
         # Latest state wins.
-        if v in wts and "verify-result" not in found:
+        if (v in wts or v in live) and "verify-result" not in found:
             state = "verifying"
         elif n in reg:
             if unmerged:
@@ -178,7 +194,7 @@ def board(repo, cfg, show_all=False):
             state = "verify pending dispatch"
         elif "result" in found:
             state = "done, awaiting acceptance"
-        elif e in wts:
+        elif e in wts or e in live:
             state = "running"
         elif "brief" in found:
             state = "pending dispatch"
@@ -196,7 +212,9 @@ def board(repo, cfg, show_all=False):
                 dirty, mins = activity(repo, wts[b])
                 act = {"worktree": b, "uncommitted": dirty, "minutes_since_change": mins}
                 break
-        rows.append({"stage": n, "state": state, "unmerged": unmerged, "activity": act})
+        sess = {b: live[b] for b in (e, v) if b in live}
+        rows.append({"stage": n, "state": state, "unmerged": unmerged, "activity": act,
+                     "sessions": sess, "files": found})
     return rows
 
 
@@ -229,8 +247,10 @@ def main():
                 f"changed {mins} min ago" if mins is not None else "empty")
             if r["state"] in ("running", "verifying") and mins is not None and mins > cfg["stale_minutes"]:
                 act += "  ⚠ possibly stalled"
+        if r["sessions"]:
+            act += ("  " if act else "") + "session " + ", ".join(f"{k}:{v}" for k, v in r["sessions"].items())
         print(f"{r['stage']:>4}  {r['state']:<28} {','.join(r['unmerged']) or '-':<14} {act}")
-    print("\n⚠ 'pending dispatch' may also mean a session is open but has not created its worktree yet.")
+    print("\n⚠ 'pending dispatch' may still be a session opened outside the session lister (e.g. an IDE panel).")
     print("⚠ A fresh worktree's change time is its creation time: recent ≠ progress.")
 
 

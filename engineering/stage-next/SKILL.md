@@ -20,6 +20,7 @@ license: MIT
 - `../orchestrator/SKILL.md` — every move below is an orchestrator move and follows that skill (pre-flight, briefs, acceptance clauses that can go red, the review-point questions).
 - `../verification/SKILL.md` — whenever this turn accepts something itself.
 - `../work-flow/SKILL.md` — lifecycle, one worktree per session, merge stages.
+- `../stage-run/SKILL.md` — launches the prompt files this turn writes, as background sessions.
 
 ---
 
@@ -40,7 +41,7 @@ Order matters: **records and acceptance first, then cleanup, then new work.** A 
 | `done, awaiting acceptance` | Decide self-verify vs separate verification (orchestrator §5). Self-verify **only** when every load-bearing claim re-runs as one command, no build is needed, and you did not author it — then re-run, record ACCEPT/REJECT with what you ran. Otherwise write the verify brief and its prompt | ⏸ if a verify prompt was written |
 | `recorded, awaiting merge` | Collect every such stage; write one merge-stage brief and prompt (tip SHAs, expected per-file blobs, a missed-merge control that goes red) | ⏸ (merge is dispatched) |
 | `closed, remove worktree` | `git worktree remove <path>` — never `--force`; it refuses if anything is uncommitted, which is the check. Keep the branch | no |
-| `pending dispatch`, `verify pending dispatch` | Make sure the prompt exists and is current; hand it over. Ask whether it is already running if the board cannot tell | ⏸ |
+| `pending dispatch`, `verify pending dispatch` | Make sure the **prompt file** (`stage-<N>-<slug>[-verify]-prompt.md`, first line `<!-- stage-run: kind=… -->`) exists and is current. If the project uses `../stage-run/SKILL.md`, offer to launch; otherwise hand the prompt over. Ask whether it is already running if the board cannot tell | ⏸ |
 | `running`, `verifying` | Nothing. Note how long since the last change; past the stall threshold, ask | no |
 | board empty of orchestrator moves | Pick the next highest-value unblocked stage (orchestrator §5 "What you decide") and write its brief and prompt | ⏸ (dispatch) |
 
@@ -51,7 +52,7 @@ After the moves: commit only the paths you changed (`git commit -- <paths>`), an
 ## Hard stops — never cross these inside this skill
 
 - ⛔ **An open decision.** Prepare the question (options, evidence, a recommendation); do not pick.
-- ⛔ **Dispatching a session.** Write the prompt; the user starts it. Do not spawn agents to do stage work.
+- ⛔ **Dispatching a session from inside this skill.** Write the prompt file; launching is `stage-run`, and only when the user asks for it. Do not spawn in-conversation agents to do stage work.
 - ⛔ **Accepting what you authored**, or anything touching shipping code, money, protocol or security, or a verdict that changes project direction — those get a separate verification session.
 - ⛔ **A brief whose premise you have not re-checked against the latest verdicts.**
 - ⛔ **Destructive cleanup beyond merged worktrees** (branches, other people's trees, `--force`).
