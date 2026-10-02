@@ -203,7 +203,7 @@ Do not dispatch a downstream implementation merely because an upstream executor 
 
 ### One session, one worktree, one branch
 
-Give every dispatched session **its own git worktree on its own branch, named after the stage** (for example `s<N>` for the executor and `s<N>v` for the verifier), including documentation-only stages. The session commits only there; integration happens in a separate merge stage.
+Give every dispatched session **its own git worktree on its own branch, named after the stage** (for example `s<N>` for the executor and `s<N>v` for the verifier), including documentation-only stages. The session commits only there; integration happens in a separate merge stage. **Once the merge has landed, remove the session's worktree** (`git worktree remove` refuses if anything is uncommitted, which is the check you want). Keep the branch: later verification may still read from it.
 
 Rules for staging paths and for never amending can only bind the session that reads them. They cannot stop two sessions from writing the **same index, HEAD and working tree** at once — in the reference project that happened eight times; the seventh hit a session that had followed every rule, and the eighth got past explicit path staging. Separate worktrees remove the shared state instead of policing it.
 

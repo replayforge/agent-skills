@@ -164,7 +164,14 @@ def board(repo, cfg, show_all=False):
         if v in wts and "verify-result" not in found:
             state = "verifying"
         elif n in reg:
-            state = "recorded, awaiting merge" if unmerged else "closed"
+            if unmerged:
+                state = "recorded, awaiting merge"
+            elif e in wts or v in wts:
+                # Merged and recorded but a worktree is still on disk: remove it
+                # (after checking it has nothing uncommitted).
+                state = "closed, remove worktree"
+            else:
+                state = "closed"
         elif "verify-result" in found:
             state = f"verdict {vd}, awaiting record"
         elif "verify" in found:
