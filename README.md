@@ -18,12 +18,13 @@ engineering/
 ├── verification/
 ├── orchestrator/
 ├── project-records/
-└── stage-status/         # live board + stage_status.py
+├── stage-status/         # live board + stage_status.py
+└── stage-next/           # advance one orchestrator turn
 ```
 
 #### engineering/help
 
-Entry point: which of the eight skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
+Entry point: which of the nine skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
 
 #### engineering/work-flow
 
@@ -68,6 +69,10 @@ It assumes the reader is another role, in another session, with no context, arri
 #### engineering/stage-status
 
 A live stage board: which stages are running, waiting to be dispatched, waiting on the orchestrator to accept or record a verdict, or waiting to be merged. It ships with `stage_status.py` (standard library only, read-only), which re-derives everything from git on every run — stage documents, the per-session branches and worktrees the workflow prescribes, merge state, and the verdict column of the register — so the board cannot go stale the way a hand-kept status table does. Conventions are overridable per project in `.stage-status.json`.
+
+#### engineering/stage-next
+
+Advances the project by one orchestrator turn: reads the stage board, takes every move that belongs to the orchestrator in a fixed order — record verdicts, self-accept only what re-runs as one command, remove merged worktrees, write the next brief and prompt — and stops at the first thing that needs the user. It never dispatches sessions and never settles an open decision.
 
 ## Role model
 
