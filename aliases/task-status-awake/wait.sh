@@ -18,7 +18,10 @@ while :; do
   out="$(python3 "$board" 2>&1)" || { echo "board failed:"; echo "$out"; exit 2; }
   busy="$(printf '%s\n' "$out" | grep -E '^ +[0-9]+ +(running|verifying) ' || true)"
   [[ -z "$busy" ]] && { echo "ALL DONE"; echo "$out"; exit 0; }
-  printf '%s\n' "$busy" | grep -q ':idle(' && { echo "SESSION IDLE BUT STAGE NOT DONE"; echo "$out"; exit 3; }
+  # A verifying row lists the executor's session (idle, its work is done) next to
+  # the verifier's (busy). Only a row with an idle session and no busy one is stuck.
+  stuck="$(printf '%s\n' "$busy" | grep ':idle(' | grep -v ':busy(' || true)"
+  [[ -n "$stuck" ]] && { echo "SESSION IDLE BUT STAGE NOT DONE"; echo "$out"; exit 3; }
   (( $(date +%s) - start >= max )) && { echo "TIMEOUT after ${max}s"; echo "$out"; exit 4; }
   sleep "$interval"
 done
