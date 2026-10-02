@@ -1,7 +1,7 @@
 ---
 name: engineering-help
 description: >
-  Entry point for the engineering skill family: which of the ten skills to
+  Entry point for the engineering skill family: which of the eleven skills to
   load for the situation at hand, how they hand work to each other, and what
   each one refuses to do. Use when the user asks what skills are available,
   which one applies, how this workflow runs, or says "有哪些 skill",
@@ -12,7 +12,7 @@ license: MIT
 
 # Engineering Skills — which one, when
 
-Ten skills. **One constitution, five roles, one about the documents, and three that drive the loop: a live board, a turn-taker, a dispatcher.**
+Eleven skills. **One constitution, five roles, one about the documents, and four that drive the loop: a live board, a turn-taker, a dispatcher, a handoff.**
 
 ## Pick by what you are about to do
 
@@ -28,6 +28,7 @@ Ten skills. **One constitution, five roles, one about the documents, and three t
 | See what is running, waiting to be dispatched, or waiting on you | `engineering-stage-status` |
 | Let the orchestrator take its next moves until something needs you | `engineering-stage-next` |
 | Launch the ready stages as background sessions instead of pasting prompts | `engineering-stage-run` |
+| Hand the orchestrator role to a fresh session | `engineering-stage-handoff` |
 
 **Load `engineering-work-flow` alongside whichever role applies.** It is the
 contract between roles, not a substitute for any of them.

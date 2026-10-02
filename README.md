@@ -20,12 +20,13 @@ engineering/
 ├── project-records/
 ├── stage-status/         # live board + stage_status.py
 ├── stage-next/           # advance one orchestrator turn
-└── stage-run/            # launch ready stages as background sessions
+├── stage-run/            # launch ready stages as background sessions
+└── stage-handoff/        # prompt for a new orchestrator session
 ```
 
 #### engineering/help
 
-Entry point: which of the ten skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
+Entry point: which of the eleven skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
 
 #### engineering/work-flow
 
@@ -78,6 +79,10 @@ Advances the project by one orchestrator turn: reads the stage board, takes ever
 #### engineering/stage-run
 
 Launches every stage that is ready as its own background agent session (`claude --bg`), using the prompt file saved beside each brief. Applies concurrency rules — one code stage at a time, one merge stage at a time, a total cap — and lists what it held back and why. A running stage whose kind it cannot read counts as code, so it can only ever hold a launch back.
+
+#### engineering/stage-handoff
+
+Writes the one prompt a fresh orchestrator session needs to take over: the project's opening order and standing rules (from the project's notes file), the live board measured now, decisions waiting on the user, and the mistakes the outgoing session made. State is pointed at, never pasted, so the prompt does not rot the moment it is written.
 
 ## Role model
 
@@ -170,7 +175,7 @@ cd agent-skills && ./install.sh        # links engineering/* and aliases/* into 
 git pull                                # later: updates every install at once (symlinks)
 ```
 
-Then restart the agent. Short commands `/task-status`, `/task-next`, `/task-run` come from `aliases/` and work in any project.
+Then restart the agent. Short commands `/task-status`, `/task-next`, `/task-run`, `/task-new-bus` come from `aliases/` and work in any project.
 
 | Needs | For |
 |---|---|
