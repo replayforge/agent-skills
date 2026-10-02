@@ -74,7 +74,7 @@ no verdict file — only the register row says it is done.
 | `verifying` | verifier worktree exists, no verdict yet | wait |
 | `verdict X, awaiting record` | verdict file exists, register row has no verdict | orchestrator records it |
 | `recorded, awaiting merge` | verdict recorded, a session branch is not in the integration branch | a merge stage |
-| `closed, remove worktree` | recorded and merged, but a session worktree is still on disk | orchestrator removes it — `git worktree remove` (it refuses if anything is uncommitted) |
+| `closed, clean up` | recorded and merged, but a session worktree is still on disk or its background session is still alive (they go idle, they do not exit) | orchestrator: `git worktree remove` (refuses if anything is uncommitted — keep it that way) and `claude rm <id>` |
 | `closed` | recorded and merged, no worktree left | — (hidden unless `--all`) |
 
 ---
@@ -89,7 +89,7 @@ Group the rows for the user — they want to know **what needs them**:
 | 📋 Needs dispatching | `pending dispatch`, `verify pending dispatch` — say where the prompt is, or offer to write it |
 | 🧭 Needs the orchestrator | `done, awaiting acceptance`, `verdict …, awaiting record` |
 | 🔀 Needs merging | `recorded, awaiting merge` |
-| 🧹 Needs cleanup | `closed, remove worktree` |
+| 🧹 Needs cleanup | `closed, clean up` |
 
 For each row give the stage number, one line on what the stage is (from the
 register or the brief's title), and the activity column. Use the user's

@@ -137,7 +137,9 @@ def sessions(cfg):
         return {}
     try:
         r = subprocess.run(cfg["session_lister"], capture_output=True, text=True, timeout=30)
-        return {a["name"]: a.get("status", "") for a in json.loads(r.stdout or "[]") if a.get("name")}
+        # id = the short form `claude attach/logs/stop/rm` accept (first 8 of sessionId)
+        return {a["name"]: {"status": a.get("status", ""), "id": (a.get("sessionId") or "")[:8]}
+                for a in json.loads(r.stdout or "[]") if a.get("name")}
     except Exception:
         return {}
 
@@ -182,10 +184,10 @@ def board(repo, cfg, show_all=False):
         elif n in reg:
             if unmerged:
                 state = "recorded, awaiting merge"
-            elif e in wts or v in wts:
-                # Merged and recorded but a worktree is still on disk: remove it
-                # (after checking it has nothing uncommitted).
-                state = "closed, remove worktree"
+            elif e in wts or v in wts or e in live or v in live:
+                # Merged and recorded, but a worktree is still on disk or a session is
+                # still alive (background sessions go idle, they do not exit): clean up.
+                state = "closed, clean up"
             else:
                 state = "closed"
         elif "verify-result" in found:
@@ -248,7 +250,8 @@ def main():
             if r["state"] in ("running", "verifying") and mins is not None and mins > cfg["stale_minutes"]:
                 act += "  ⚠ possibly stalled"
         if r["sessions"]:
-            act += ("  " if act else "") + "session " + ", ".join(f"{k}:{v}" for k, v in r["sessions"].items())
+            act += ("  " if act else "") + "session " + ", ".join(
+                f"{k}:{v['status']}({v['id']})" for k, v in r["sessions"].items())
         print(f"{r['stage']:>4}  {r['state']:<28} {','.join(r['unmerged']) or '-':<14} {act}")
     print("\n⚠ 'pending dispatch' may still be a session opened outside the session lister (e.g. an IDE panel).")
     print("⚠ A fresh worktree's change time is its creation time: recent ≠ progress.")
