@@ -29,6 +29,7 @@ license: MIT
 - `../research/SKILL.md` — evidence gathering dispatched before a decision or implementation can proceed.
 - `../project-records/SKILL.md` — the form of the durable documents every role reads and writes.
 - `../knowledge-capture/SKILL.md` — durable knowledge extraction.
+- `../stage-status/SKILL.md` — the live stage board this role reads at every review.
 
 This file covers only what is specifically the coordinating role's job and is
 not already in the constitution.
@@ -190,6 +191,12 @@ error, not an executor's:
 - A brief warned "line numbers may have shifted" next to a count that was
   itself wrong. The warning pointed at the safe risk and covered for the real
   one.
+- A brief told the executor to backfill a list of open questions from the
+  decision register, and mapped one question onto a decision that answered a
+  **different** question (same sub-number, different scope). The executor
+  followed the mapping, flagged the mismatch in prose — and the item still
+  went in marked "✅ decided". The verifier caught it: the user had never
+  answered that question at all.
 
 → Practical consequences, in order of how much they save:
 
@@ -205,6 +212,9 @@ error, not an executor's:
    contradictory spec stops the executor to guess which clause wins.
 5. Write in the brief: **"re-verify every one of these yourself"** — and
    require a re-verification table in the report.
+6. **A decision is cited with its scope, not mapped by number.** Quote the
+   part of the decision that answers the question. If you cannot quote it,
+   the question is still open — say so instead of mapping.
 
 ### The NOT-DOING list matters more than the doing list
 
@@ -260,6 +270,8 @@ the implementation report    what was built and on what evidence
 the verification report      what was re-run, and the verdict
 the current project state    what the rest of the plan assumes
 the registers                what was already decided, found, or ruled out
+the live stage board         what is running, waiting, or unmerged right now
+                             (../stage-status/SKILL.md — derived, never hand-kept)
 ```
 
 ### What you decide, in this order
@@ -297,6 +309,9 @@ Three incidents in the reference project, each a different shape:
 
 → Practical rules:
 
+0. **Give every session its own worktree and branch** (`../work-flow/SKILL.md`
+   §5). Rules 1–3 below only matter where that was not done — and they can
+   only bind the session that reads them.
 1. **Never `git add -A` in a shared worktree.** Stage paths explicitly.
 2. **Serialize register writes through yourself**, or require every edit to be
    anchored (§7) so a clobber fails loudly instead of silently succeeding.
@@ -304,6 +319,10 @@ Three incidents in the reference project, each a different shape:
    during it.** That is an assumption; require it stated, not assumed.
 4. **A forward reference to a section that does not exist yet means someone is
    writing right now.** Stop and ask before touching that file.
+5. **While a merge stage is fast-forwarding the integration branch, do not
+   commit to it yourself.** Have the merge stage use `--ff-only` and stop on
+   failure; a fast-forward that fails because you committed is the safe
+   outcome, a merge that silently interleaves is not.
 
 ⚠ Two sessions reaching the same conclusion independently is corroboration and
 is worth having. Two sessions *writing* it simultaneously is not.

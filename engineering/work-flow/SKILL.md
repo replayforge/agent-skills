@@ -27,6 +27,7 @@ This skill is the workflow constitution. Role-specific and knowledge-persistence
 - `../research/SKILL.md` — evidence gathering dispatched before a decision or implementation can proceed.
 - `../project-records/SKILL.md` — the form of the durable documents every role reads and writes.
 - `../knowledge-capture/SKILL.md` — durable engineering knowledge extraction and persistence.
+- `../stage-status/SKILL.md` — the live stage board, derived from git.
 
 Do not duplicate the detailed rules of sibling skills here. This file defines how the roles interact.
 
@@ -112,6 +113,10 @@ Prefer these durable project registers when the project is large enough to need 
 
 Do not create documents merely to satisfy this list. Reuse an existing project information architecture when it already serves the same purpose.
 
+### Live status is derived, not written
+
+Which stage is running, waiting or unmerged is **minute-scale state** — a hand-maintained status table is wrong within minutes and never says so. Keep the registers for what does not rot (decisions, findings, verdicts with their reasons) and **derive live status from git** — briefs and reports that exist, session branches, worktrees, merge state. `../stage-status/SKILL.md` is that board.
+
 ### Finding vs decision vs rule
 
 Keep these distinct:
@@ -195,6 +200,14 @@ PROTO-02 protocol evidence ─┘                              ↓
 ```
 
 Do not dispatch a downstream implementation merely because an upstream executor reported success.
+
+### One session, one worktree, one branch
+
+Give every dispatched session **its own git worktree on its own branch, named after the stage** (for example `s<N>` for the executor and `s<N>v` for the verifier), including documentation-only stages. The session commits only there; integration happens in a separate merge stage.
+
+Rules for staging paths and for never amending can only bind the session that reads them. They cannot stop two sessions from writing the **same index, HEAD and working tree** at once — in the reference project that happened eight times; the seventh hit a session that had followed every rule, and the eighth got past explicit path staging. Separate worktrees remove the shared state instead of policing it.
+
+The same naming is what lets live status be derived: a branch that exists, a worktree that exists, a report committed on that branch, a branch merged or not.
 
 ## 6. Pre-flight before writing a brief
 

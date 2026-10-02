@@ -17,12 +17,13 @@ engineering/
 ├── implementation/
 ├── verification/
 ├── orchestrator/
-└── project-records/
+├── project-records/
+└── stage-status/         # live board + stage_status.py
 ```
 
 #### engineering/help
 
-Entry point: which of the seven skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
+Entry point: which of the eight skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
 
 #### engineering/work-flow
 
@@ -63,6 +64,10 @@ It deliberately does not restate the constitution. What it adds is the coordinat
 Owns the form of the durable markdown that crosses sessions: stable ID schemes that double as search keys, append-only ordering, scannable index tables, closed status vocabularies, keeping overturned conclusions without misleading the next reader, placing a warning at every point a search can land on the thing it protects, and putting a mechanical check on the parts that rot.
 
 It assumes the reader is another role, in another session, with no context, arriving by `grep` — not someone reading the file top to bottom.
+
+#### engineering/stage-status
+
+A live stage board: which stages are running, waiting to be dispatched, waiting on the orchestrator to accept or record a verdict, or waiting to be merged. It ships with `stage_status.py` (standard library only, read-only), which re-derives everything from git on every run — stage documents, the per-session branches and worktrees the workflow prescribes, merge state, and the verdict column of the register — so the board cannot go stale the way a hand-kept status table does. Conventions are overridable per project in `.stage-status.json`.
 
 ## Role model
 

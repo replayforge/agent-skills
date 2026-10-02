@@ -302,6 +302,30 @@ and after every iteration.
 → Related: a textual search does not validate a resolved reference. Confirm
 that the check being run and the failure being claimed are at the same layer.
 
+### When the data and its checker changed in the same round
+
+"The new checker passes on the new data" is the weakest evidence there is:
+whoever loosened one could have loosened the other, and the green looks the
+same. Run it **crosswise**:
+
+```text
+old checker × new data   every failure must trace to one authorized change —
+                         anything else is a real defect, or the change was wider
+                         than authorized
+new checker × old data   every defect the old checker caught must still be
+                         caught — if one disappears, the checker was loosened
+```
+
+> A round edited both a contract's golden examples and the script that checks
+> them. Crosswise, the old script failed on exactly one value on the new data —
+> the one a recorded decision had just made legal — and the new script still
+> caught all four defects the previous round had found on the old data. That
+> pair of results is what made "the checker was not loosened" a finding rather
+> than a hope.
+
+→ When a legitimate change turns one of the old red controls green, that
+dimension now has no guard. Require a replacement control, not a note.
+
 ---
 
 ## 11. Silence is a finding

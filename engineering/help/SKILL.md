@@ -1,7 +1,7 @@
 ---
 name: engineering-help
 description: >
-  Entry point for the engineering skill family: which of the seven skills to
+  Entry point for the engineering skill family: which of the eight skills to
   load for the situation at hand, how they hand work to each other, and what
   each one refuses to do. Use when the user asks what skills are available,
   which one applies, how this workflow runs, or says "有哪些 skill",
@@ -12,7 +12,7 @@ license: MIT
 
 # Engineering Skills — which one, when
 
-Seven skills. **One constitution, five roles, one about the documents.**
+Eight skills. **One constitution, five roles, one about the documents, one live status board.**
 
 ## Pick by what you are about to do
 
@@ -25,6 +25,7 @@ Seven skills. **One constitution, five roles, one about the documents.**
 | Write or fix a document another session will read | `engineering-project-records` |
 | Preserve a lesson outside this project | `engineering-knowledge-capture` |
 | Understand how the roles fit together | `engineering-work-flow` |
+| See what is running, waiting to be dispatched, or waiting on you | `engineering-stage-status` |
 
 **Load `engineering-work-flow` alongside whichever role applies.** It is the
 contract between roles, not a substitute for any of them.
