@@ -30,7 +30,7 @@ python3 <this skill's directory>/stage_run.py --repo <project root>             
 #   --only 95,96   restrict to these stages
 ```
 
-Always run `--dry-run` first and show the user the plan in one short table, then launch. Report each launched session's id and how to watch it:
+If `<repo>/.stage-status.json` names a `notes` file, read it first — project rules win. Always run `--dry-run` first and show the user the plan in one short table, then launch. Report each launched session's id and how to watch it:
 
 ```text
 claude agents          list sessions and their status

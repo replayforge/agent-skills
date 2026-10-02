@@ -55,6 +55,7 @@ Standard library only. Nothing is written.
 | Session branches | executor `s<N>`, verifier `s<N>v` | `executor_branch`, `verifier_branch` (use `{n}`) |
 | Verdict register | rows `\| <N> \|` in `docs/tasks/README.md` carrying ✅／🔴／⏸ + **ACCEPT／REJECT／BLOCKED** | `register` (or `null`), `verdict_marker` (regex) |
 | Old stages with no branch | shown | `hide_branchless_below: <N>` |
+| Project rules for the agent | none | `notes`: path to a markdown file the agent reads before acting (who may dispatch, push policy, language…) |
 | Stall threshold | 60 minutes without a file change | `stale_minutes` |
 | Live sessions | `claude agents --json` — a session named `s<N>`／`s<N>v` counts as running even before its worktree exists | `session_lister` (or `null`) |
 

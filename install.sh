@@ -27,12 +27,14 @@ skill_name() { sed -n 's/^name:[[:space:]]*//p' "$1/SKILL.md" | head -1; }
 
 # Plain glob, not mapfile — macOS ships bash 3.2.
 DIRS=()
-for d in "$REPO"/engineering/*/; do [[ -f "${d}SKILL.md" ]] && DIRS+=("${d%/}"); done
-[[ ${#DIRS[@]} -gt 0 ]] || { echo "no skills found under $REPO/engineering" >&2; exit 1; }
+# engineering/ holds the skills; aliases/ holds short command names (task-status, …)
+# that point the agent at one of them.
+for d in "$REPO"/engineering/*/ "$REPO"/aliases/*/; do [[ -f "${d}SKILL.md" ]] && DIRS+=("${d%/}"); done
+[[ ${#DIRS[@]} -gt 0 ]] || { echo "no skills found under $REPO/engineering or $REPO/aliases" >&2; exit 1; }
 
 if [[ "$MODE" == "--list" ]]; then
   printf '%-28s %s\n' "NAME" "SOURCE"
-  for d in "${DIRS[@]}"; do printf '%-28s %s\n' "$(skill_name "$d")" "engineering/$(basename "$d")"; done
+  for d in "${DIRS[@]}"; do printf '%-28s %s\n' "$(skill_name "$d")" "$(basename "$(dirname "$d")")/$(basename "$d")"; done
   echo; echo "targets:"
   for t in "${TARGETS[@]}"; do [[ -d "$t" ]] && echo "  $t" || echo "  $t   (absent — would be skipped)"; done
   exit 0

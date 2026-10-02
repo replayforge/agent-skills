@@ -161,3 +161,28 @@ A session normally loads `work-flow` plus the one role skill it is acting as. Lo
 - Existing notebook information architecture wins over assumptions in the skill.
 - Do not create a new category for every note.
 - Never persist secrets, credentials, private keys, seed phrases, or tokens into ordinary knowledge notes.
+
+## On a new machine
+
+```bash
+git clone https://github.com/replayforge/agent-skills.git
+cd agent-skills && ./install.sh        # links engineering/* and aliases/* into ~/.claude, ~/.codex, ~/.agents
+git pull                                # later: updates every install at once (symlinks)
+```
+
+Then restart the agent. Short commands `/task-status`, `/task-next`, `/task-run` come from `aliases/` and work in any project.
+
+| Needs | For |
+|---|---|
+| `python3` ≥ 3.8, `git` | every stage tool (standard library only) |
+| `claude` CLI | `/task-run` only (`claude --bg`) |
+| Once per project, interactively: `claude --dangerously-skip-permissions` in the repo root, accept the trust prompt and the bypass disclaimer | `/task-run` only — background sessions cannot answer either prompt |
+
+Per project, commit two files so every machine and every session gets the same behavior:
+
+| File | Holds |
+|---|---|
+| `.stage-status.json` | conventions that differ from the defaults (integration branch, branch names, register, limits) and `notes` |
+| the `notes` file (e.g. `.claude/stage-notes.md`) | project rules the agent reads before acting: who may dispatch, push policy, language, register locations |
+
+Nothing machine-specific belongs in either: the tools find the repository from the working directory.

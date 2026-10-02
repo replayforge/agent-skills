@@ -27,6 +27,7 @@ license: MIT
 ## The turn
 
 ```text
+0. If <repo>/.stage-status.json names a `notes` file, read it — project rules win.
 1. Run the stage board.
 2. For each row, in this order, take the move in the table below.
 3. Stop at the first move marked ⏸ — finish the row you are on, do not start another.
