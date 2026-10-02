@@ -81,6 +81,12 @@ def verdict(repo, ref, path):
     """Verdicts are written at the top; only the head is read so that prose
     like "must not REJECT" further down cannot match."""
     head = "\n".join(git(repo, "show", f"{ref}:{path}").splitlines()[:40])
+    # The verdict line is bold; the first bold keyword wins. Without this, a
+    # table row such as "does not amount to a REJECT" above or beside an
+    # ACCEPT verdict was read as REJECT.
+    m = re.search(r"\*\*(ACCEPT|REJECT|BLOCKED)", head)
+    if m:
+        return m.group(1)
     for k in ("REJECT", "BLOCKED", "ACCEPT"):
         if k in head:
             return k
