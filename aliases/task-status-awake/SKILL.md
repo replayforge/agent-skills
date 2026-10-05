@@ -32,6 +32,7 @@ Wait for the running stages without spending a model turn per check.
    | 3 `SESSION IDLE…` | a stage is still "running" but its session is idle — no result committed | `claude attach <id>` to look; do not assume it finished |
    | 4 `TIMEOUT` | upper bound reached, still running | re-run `/task-status-awake`, or check with `claude logs <id>` |
    | 2 | the board script failed | show the error |
+   | 5 `ALREADY DISPATCHING` | another `--dispatch` watcher already runs for this repo | nothing — that one will notify; do not start a second |
 
    Show the board as `engineering-stage-status` → "Presenting it" says. Report only — do not run `/task-next` yourself unless the user asks.
 

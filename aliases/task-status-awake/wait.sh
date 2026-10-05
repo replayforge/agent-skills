@@ -13,12 +13,26 @@
 #         (finished without committing a result, or stuck) — needs a human
 # exit 4  max_s elapsed
 # exit 2  the board itself failed
+# exit 5  --dispatch, but another dispatching watcher already runs for this repo
 dispatch=0
 [[ "${1:-}" == "--dispatch" ]] && { dispatch=1; shift; }
 interval="${1:-180}"; max="${2:-10800}"
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 board="$here/../../engineering/stage-status/stage_status.py"
 run="$here/../../engineering/stage-run/stage_run.py"
+if (( dispatch )); then
+  # Two dispatching watchers on one repo would launch the same stage twice.
+  lock="/tmp/stage-dispatch-$(printf '%s' "$PWD" | cksum | cut -d' ' -f1)"
+  if ! mkdir "$lock" 2>/dev/null; then
+    other="$(cat "$lock/pid" 2>/dev/null)"
+    if [[ -n "$other" ]] && kill -0 "$other" 2>/dev/null; then
+      echo "ALREADY DISPATCHING (pid $other) — not starting a second watcher"; exit 5
+    fi
+    rm -rf "$lock"; mkdir "$lock"   # stale: its owner is gone
+  fi
+  echo $$ > "$lock/pid"
+  trap 'rm -rf "$lock"' EXIT
+fi
 start=$(date +%s)
 while :; do
   if (( dispatch )); then
