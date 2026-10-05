@@ -394,6 +394,26 @@ not just a corrected line in a brief.
 
 - **REJECT** → the corrective work is a new stage with its own brief, not an
   instruction appended to a conversation. Name which claim failed.
+  - **When the verifier lists fix options and defers the choice**, choosing
+    is yours: state the chosen fix at the top of the corrective brief, with
+    the rejected options. Do not hand the executor a menu — that bundles a
+    decision with its implementation.
+  - **A narrow REJECT on wording alone may close without a corrective
+    round** — but only when *all* hold: nothing that ships is affected; the
+    correct statement is already written in the verify result; no
+    downstream stage consumes the overturned text before it is corrected;
+    and any question built on it is rewritten from the verify result before
+    it reaches the user. Record it as such in the verdict entry ("no
+    corrective round; cite the verify result; the overturned sentences must
+    not be cited"). Applied in the reference project to three research
+    rounds in one day, each of which would otherwise have cost a full round
+    to change a few sentences.
+- **Work moving outside the loop** (the user hands a piece to a different
+  agent or person): hold the overlapping stage instead of letting it run in
+  parallel, and hand over a requirements document that separates **decided**
+  items (each with the user's own words) from **to be proposed and
+  discussed** items, and states what the other party must report back. The
+  decision register stays the authority; the document is a projection of it.
 - **BLOCKED** → identify what would unblock it. If that is a fact, dispatch
   research; if it is a choice, it belongs to whoever owns the decision
   register. A blocked stage must not be converted into a conditional accept.

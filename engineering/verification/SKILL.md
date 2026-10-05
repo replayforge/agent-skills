@@ -299,6 +299,24 @@ the change under test and only touch files that don't contain it; restore
 via file copy rather than version control; print a distinguishing line before
 and after every iteration.
 
+⚠ **Restoring by copy has its own trap: the timestamp.** `cp f f.bak` → mutate →
+build → `mv f.bak f` puts the original bytes back with the **backup's** mtime,
+which is older than the artifact just built from the mutated bytes. An
+mtime-driven build tool (cargo, make) then treats the stale artifact as
+current.
+
+> A revert script's last mutation removed a guard; after restoring, the full
+> check went red on exactly that mutation's shape, although the file on disk
+> was correct. The mtimes showed it: restored source 14:38:56, test binary
+> built from the mutation 14:38:57. Every earlier iteration was valid only
+> because the next mutation touched a file and forced a rebuild.
+
+→ After restoring, `touch` every restored file (or build into a fresh target
+directory), and treat "first run red, second run green after a touch" as a
+claim to adjudicate, not as a rerun: green after a rerun is acceptable only
+when the root cause is evidenced *and* the build inputs demonstrably changed
+between the two runs.
+
 → Related: a textual search does not validate a resolved reference. Confirm
 that the check being run and the failure being claimed are at the same layer.
 
@@ -325,6 +343,27 @@ new checker × old data   every defect the old checker caught must still be
 
 → When a legitimate change turns one of the old red controls green, that
 dimension now has no guard. Require a replacement control, not a note.
+
+### Reviewing a checker
+
+Two failure shapes recur when the artifact under review is itself a checker
+(a ruler, a linter, a golden-file validator):
+
+- **A mutation's exit code is not its verdict.** Before counting a mutation as
+  "caught", confirm it fails for **exactly the reason it was built to
+  trigger** — read the failure lines. A helper that differs from the real
+  system in an unrelated detail adds a second failure and makes an uncaught
+  mutation look caught. Two consecutive rounds in the reference project hit
+  this: once a red control was only red because of a fixture shape, once a
+  mutation was "caught" by noise and exit 0 surfaced only after the helper
+  was fixed.
+- **The same fact derived in two places.** If the checker answers "what was
+  the result of this command?" in more than one spot, check that every spot
+  uses the same definition. One checker built a map (last write wins) in the
+  money-sensitive rule and took the first match elsewhere, and nothing
+  enforced "one result per command" — so *rejected, then accepted* on the
+  same id slipped through the rule that guarded an unsent payment. The fix is
+  structural: one accessor, plus an explicit uniqueness rule.
 
 ---
 
