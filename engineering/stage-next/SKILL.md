@@ -71,3 +71,4 @@ Needs you           <the one decision or dispatch>, with the prompt or the quest
 ```
 
 Keep it short. The registers hold the detail; the user wants to know what changed and what they must do.
+How to put a question to the user, and how to hold an approval until its moment: `../orchestrator/SKILL.md` §8.

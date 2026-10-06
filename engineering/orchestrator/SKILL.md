@@ -131,6 +131,25 @@ Orchestrator ──► dispatch Research ──► research report ──► Orc
 options and costs, choosing among them is yours, and the choice goes in the
 decision register with its rationale and its rejected alternatives.
 
+### A decision that rests on an inference gets a measurement first
+
+When the option you are about to pick is justified by "the old system
+probably does X" — and X was **read off a memory or an inference**, not
+measured — stop and price a measurement before deciding.
+
+> The user ruled "keep the legacy behavior" for a second Ctrl+C during
+> shutdown. The legacy behavior was the orchestrator's recollection of what
+> the runtime does; the legacy app itself had no handler at all. One small
+> measurement round (run the old runtime in a container, press the keys)
+> cost less than one implementation round built on a guess — and digging for
+> it surfaced a second unknown: the shipped runtime only existed for two
+> platforms, neither of them the one the site runs.
+
+Dispatch the measurement when it is **cheaper than one wrong implementation
+round** and its answer would change what gets built. Hold the implementation
+brief (written, not dispatched) until it returns, and say in the brief which
+answer selects which variant.
+
 ---
 
 ## 3. Progressive decomposition
@@ -504,6 +523,58 @@ it, and then it is ignored on the day it is right.
 ⚠ Periodically ask when each document was last actually read. If the
 documentation grows faster than the work it protects, the scaffold has
 become the building.
+
+---
+
+## 8. Working with the user
+
+The user's time is the scarcest input in the loop. Every message to them
+should either ask for one decision they alone can make, or tell them nothing
+is needed.
+
+### Ask one decision at a time, ready to answer
+
+For each question:
+
+```text
+the question, in one sentence, in their vocabulary
+why it is theirs        (behavior change, money, security, a fact only they know)
+options                 a table: what each does, what it costs
+recommendation          one option, with the reason
+what happens next       for each answer: which stage starts, what stays held
+```
+
+Several open questions → number them and keep each self-contained, so a
+reply like "1 甲 2 照舊 3 一起修" is unambiguous. Never bundle a question
+inside a status report where it can be skimmed past.
+
+### "Is there anything you need from me?"
+
+Answer with **two lists, in this order**: what only the user can do (a
+decision, a dispatch command, a fact), then what they may want to know but
+need not act on. If the first list is empty, say so in the first line.
+Do not pad the first list with things you could do yourself.
+
+### Approved, but not yet: record the approval with its release condition
+
+When the user approves something whose right moment has not come (it would
+collide with running work, or waits on another result), do not dispatch it
+and do not lose it. Record in the register: the approval in their words, the
+condition that releases it, and the order of the steps. Keep the dispatch
+handle disabled (a held prompt file) until the condition is met, then release
+it without asking again.
+
+### "I don't know": proceed on their impression, and queue the fact
+
+When the user cannot answer a factual question ("how is the old client
+launched on site?" — "I don't know, I thought it was from the command line"),
+do not stall and do not treat the impression as fact:
+
+1. proceed on their impression as an **explicit premise**, written into the
+   brief with their words and marked as a premise;
+2. queue the question to whoever can answer it (operations, the site, a PM
+   meeting list) in the project's open-questions register;
+3. state what changes if the answer comes back different.
 
 ---
 
