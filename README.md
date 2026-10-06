@@ -21,7 +21,8 @@ engineering/
 ├── stage-status/         # live board + stage_status.py
 ├── stage-next/           # advance one orchestrator turn
 ├── stage-run/            # launch ready stages as background sessions
-└── stage-handoff/        # prompt for a new orchestrator session
+├── stage-handoff/        # prompt for a new orchestrator session
+└── doc-fit/              # cold read as an outside reader + fact-preservation check (/task-fit-md)
 ```
 
 #### engineering/help
@@ -55,6 +56,10 @@ Each invariant is derived from a real incident in which a session reasoned valid
 Owns independent and adversarial verification: re-running the load-bearing assertions rather than reading the report, refusing green that was obtained by rerunning, checking whether repeated samples are actually independent, requiring the previous version's number beside every improved metric, demanding an enumeration behind every absence claim, and challenging the acceptance criteria themselves.
 
 It deliberately does not reproduce the implementation session's reasoning — following the same path reaches the same place.
+
+#### engineering/doc-fit
+
+Makes a document read smoothly for a named outside reader (a PM, a new hire): a fresh session with no project memory reads it cold, lists every jump (undefined ID, missing why, assumed history, unbridged section), and fills each from repository sources. `check_doc_fit.py` fails if any ID, number, code span or quoted phrase of the original was dropped or changed. Alias: `/task-fit-md`.
 
 #### engineering/orchestrator
 
