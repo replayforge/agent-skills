@@ -3,10 +3,13 @@
 # Meant for Bash run_in_background: one notification at the end, no model
 # turn per poll (unlike /loop).
 #
-#   wait.sh [--dispatch] [interval_s=180] [max_s=10800]
+#   wait.sh [--dispatch] [--until N[,M…]] [interval_s=180] [max_s=10800]
 #
 # --dispatch  on every poll, first run stage-run (same caps as /task-run) so a
 #             freed slot is refilled with the next stage that has a prompt file.
+# --until     also wake as soon as one of these stages is no longer
+#             running/verifying (the user is waiting on that one), without
+#             waiting for the rest. Combine with --dispatch or run beside it.
 #
 # exit 0  nothing running/verifying any more
 # exit 3  a row is still running/verifying but its session went idle
@@ -14,8 +17,16 @@
 # exit 4  max_s elapsed
 # exit 2  the board itself failed
 # exit 5  --dispatch, but another dispatching watcher already runs for this repo
+# exit 6  --until: one of the named stages finished (others may still run)
 dispatch=0
-[[ "${1:-}" == "--dispatch" ]] && { dispatch=1; shift; }
+until_=""
+while [[ "${1:-}" == --* ]]; do
+  case "$1" in
+    --dispatch) dispatch=1; shift ;;
+    --until) until_="${2:?--until needs stage numbers}"; shift 2 ;;
+    *) echo "unknown option $1"; exit 2 ;;
+  esac
+done
 interval="${1:-180}"; max="${2:-10800}"
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 board="$here/../../engineering/stage-status/stage_status.py"
@@ -45,6 +56,9 @@ while :; do
   out="$(python3 "$board" 2>&1)" || { echo "board failed:"; echo "$out"; exit 2; }
   busy="$(printf '%s\n' "$out" | grep -E '^ +[0-9]+ +(running|verifying) ' || true)"
   [[ -z "$busy" ]] && { echo "ALL DONE"; echo "$out"; exit 0; }
+  for n in ${until_//,/ }; do
+    printf '%s\n' "$busy" | grep -qE "^ +$n " || { echo "STAGE $n FINISHED"; echo "$out"; exit 6; }
+  done
   # A verifying row lists the executor's session (idle, its work is done) next to
   # the verifier's (busy). Only a row with an idle session and no busy one is stuck.
   stuck="$(printf '%s\n' "$busy" | grep ':idle(' | grep -v ':busy(' || true)"

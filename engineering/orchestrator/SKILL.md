@@ -215,6 +215,16 @@ error, not an executor's:
 6. **A decision is cited with its scope, not mapped by number.** Quote the
    part of the decision that answers the question. If you cannot quote it,
    the question is still open — say so instead of mapping.
+7. **A prohibition marker that lost its negation is an instruction.** "⛔ do
+   not read the whole file" written as "⛔ read the whole file" reads as an
+   order, and nothing downstream objects. In the reference project it
+   happened once to one orchestrator and three times in one session to the
+   next — each caught only by rereading. Run
+   `python3 <this skill>/check_forbid_negation.py <brief> <prompt>` before
+   committing a brief or prompt (exit 1 lists every `⛔` with no negation
+   word within 8 characters; `--self-test` has positive and negative cases;
+   mark a deliberate non-prohibition line `<!-- neg-ok -->`). Generating a
+   brief with a heredoc or string replacement is where it happens most.
 
 ### The NOT-DOING list matters more than the doing list
 
@@ -458,7 +468,7 @@ two drift, and the drift is invisible until they contradict.
 ## 7. Governing the registers
 
 `../work-flow/SKILL.md` §2 and §14 define the registers and the recording
-rules. Three judgment calls are yours:
+rules. Four judgment calls are yours:
 
 **An overturn is an entry, not a deletion.** Keep the old conclusion, the new
 evidence, and *where the old reasoning broke*. Deleting it guarantees the
@@ -469,6 +479,18 @@ cited it.
 earned it gets treated as dogma and bypassed the first time someone judges
 "this case is different" — and usually the case *is* different, for a reason
 that doesn't apply.
+
+**Recording a user's answer as an overturn needs their timeline first.** A
+short answer given while discussing one sub-option ("don't restart it",
+said about *which mechanism* restarts the process) is easily registered as
+reversing the whole decision. In the reference project that misreading
+stood for a day, contradicted the next answer, and nearly sent a contract
+round out on the wrong premise; when the user was finally shown their own
+three statements in date order, the reply was "it was always option 2".
+Before writing an answer into the register as overturning an accepted
+decision, show the user every earlier statement on it, dated and quoted, and
+ask which reading they mean. Two readings that both survive are a question,
+not a choice for you to make.
 
 **Promote a reminder into an `exit 1` after it fails twice, not
 preemptively.** Before twice you are guessing at the failure mode and will

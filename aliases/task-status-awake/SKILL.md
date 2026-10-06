@@ -23,6 +23,7 @@ Wait for the running stages without spending a model turn per check.
    Arguments: poll interval and upper bound in seconds. Use the user's numbers if they gave any.
    🔴 **Set `timeout: 7200000`.** A background Bash command without it is killed at the default 30 minutes, long before the watcher's own bound — and the kill looks like an ordinary exit. 7200000 ms is the maximum, so keep the upper bound ≤ 7100 s; re-run the watcher when it reports `TIMEOUT`.
    **`--dispatch`** (first argument, `wait.sh --dispatch 180 7100`): on every poll, first run `engineering-stage-run` with its normal caps, so a slot freed by a finished stage is refilled with the next stage that has a prompt file; each launch is logged with its time. Use it when the user has asked for automatic refill (or the project notes say so) — launching sessions is otherwise the user's call via `/task-run`.
+   **`--until N[,M]`**: also wake as soon as one named stage is no longer running/verifying — for when the user asked to be told early about that one stage. It takes no lock, so it can run **beside** an existing `--dispatch` watcher (`wait.sh --until 132 60 7100`).
    ⛔ Do not use `/loop` or `ScheduleWakeup` for this — they cost a full model turn on every poll.
 3. Tell the user, in their language, what is being watched (the running rows) and that you will report when it ends. Then stop.
 4. When the background command exits, read its output and report by exit code:
@@ -34,6 +35,7 @@ Wait for the running stages without spending a model turn per check.
    | 4 `TIMEOUT` | upper bound reached, still running | re-run `/task-status-awake`, or check with `claude logs <id>` |
    | 2 | the board script failed | show the error |
    | 5 `ALREADY DISPATCHING` | another `--dispatch` watcher already runs for this repo | nothing — that one will notify; do not start a second |
+| 6 `STAGE N FINISHED` | `--until N`: that stage left running/verifying (others may still run) | tell the user right away (they asked to be told early); read its verdict |
 
    Show the board as `engineering-stage-status` → "Presenting it" says. Report only — do not run `/task-next` yourself unless the user asks.
 
