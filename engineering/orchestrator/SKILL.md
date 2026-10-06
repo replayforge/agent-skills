@@ -131,24 +131,33 @@ Orchestrator ──► dispatch Research ──► research report ──► Orc
 options and costs, choosing among them is yours, and the choice goes in the
 decision register with its rationale and its rejected alternatives.
 
-### A decision that rests on an inference gets a measurement first
+### When the decider is unsure, bring data or concrete options — not a question
 
-When the option you are about to pick is justified by "the old system
-probably does X" — and X was **read off a memory or an inference**, not
-measured — stop and price a measurement before deciding.
+Whenever a decision rests on something nobody has measured — the user says
+"I don't know" or "I'm not sure", or the option on the table is justified by
+an inference ("the old system probably does X", "this should be fast
+enough") — do not ask the user to decide blind and do not pick on a guess.
+Bring them what makes the decision easy:
+
+- **data**: a measurement that answers the question (run it, count it, time
+  it), with the command so it can be re-run; or
+- **concrete options**: each with what it does, what it costs, what it
+  risks, and which one you recommend — specific enough that choosing is a
+  one-word answer.
+
+If the data does not exist yet, **price getting it**: dispatch a small
+measurement or research round when it is cheaper than one wrong
+implementation round and its answer would change what gets built. Hold the
+dependent brief (written, not dispatched) and state in it which answer
+selects which variant.
 
 > The user ruled "keep the legacy behavior" for a second Ctrl+C during
-> shutdown. The legacy behavior was the orchestrator's recollection of what
-> the runtime does; the legacy app itself had no handler at all. One small
-> measurement round (run the old runtime in a container, press the keys)
-> cost less than one implementation round built on a guess — and digging for
-> it surfaced a second unknown: the shipped runtime only existed for two
-> platforms, neither of them the one the site runs.
-
-Dispatch the measurement when it is **cheaper than one wrong implementation
-round** and its answer would change what gets built. Hold the implementation
-brief (written, not dispatched) until it returns, and say in the brief which
-answer selects which variant.
+> shutdown. That behavior was the orchestrator's recollection of the runtime;
+> the legacy app itself had no handler. A one-session measurement (run the
+> old runtime in a container, press the keys) cost less than an
+> implementation round built on a guess — and preparing it surfaced a second
+> unknown the user could not answer either (how the site launches the old
+> client), which went onto the meeting list instead of being assumed.
 
 ---
 
@@ -568,7 +577,8 @@ it without asking again.
 
 When the user cannot answer a factual question ("how is the old client
 launched on site?" — "I don't know, I thought it was from the command line"),
-do not stall and do not treat the impression as fact:
+do not stall and do not treat the impression as fact (§2: bring data or
+options for the decision itself):
 
 1. proceed on their impression as an **explicit premise**, written into the
    brief with their words and marked as a premise;
