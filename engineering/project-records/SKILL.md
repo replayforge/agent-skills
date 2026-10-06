@@ -165,6 +165,11 @@ same entry, and grep lands on either.** So:
 
 That paragraph is the single highest-value thing in a docs README.
 
+⚠ This is for registers searched by grep. A **status row read every turn**
+is different: keep only its current state there and move the history,
+verbatim, into an append-only file (`../doc-writing/SKILL.md` §4). A status
+table that kept every overturn in place reached 270 KB and stopped being read.
+
 ---
 
 ## 5b. Anchor every edit to a shared register

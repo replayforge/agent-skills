@@ -225,6 +225,10 @@ error, not an executor's:
    word within 8 characters; `--self-test` has positive and negative cases;
    mark a deliberate non-prohibition line `<!-- neg-ok -->`). Generating a
    brief with a heredoc or string replacement is where it happens most.
+8. **The same rule covers every sentence, not just the fact table.** The
+   unmeasured "existing X" usually sits in a scope row or an acceptance
+   clause. Follow `../doc-writing/SKILL.md` and run its `check_doc_write.py`
+   next to the negation check.
 
 ### The NOT-DOING list matters more than the doing list
 

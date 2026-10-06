@@ -22,12 +22,13 @@ engineering/
 ├── stage-next/           # advance one orchestrator turn
 ├── stage-run/            # launch ready stages as background sessions
 ├── stage-handoff/        # prompt for a new orchestrator session
-└── doc-fit/              # cold read as an outside reader + fact-preservation check (/task-fit-md)
+├── doc-fit/              # cold read as an outside reader + fact-preservation check (/task-fit-md)
+└── doc-writing/          # write-time discipline + check_doc_write.py
 ```
 
 #### engineering/help
 
-Entry point: which of the eleven skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
+Entry point: which of the thirteen skills to load for the situation at hand, how they hand work to each other, and what each one refuses to do. Load this when you do not yet know which role you are in.
 
 #### engineering/work-flow
 
@@ -60,6 +61,10 @@ It deliberately does not reproduce the implementation session's reasoning — fo
 #### engineering/doc-fit
 
 Makes a document read smoothly for a named outside reader (a PM, a new hire): a fresh session with no project memory reads it cold, lists every jump (undefined ID, missing why, assumed history, unbridged section), and fills each from repository sources. `check_doc_fit.py` fails if any ID, number, code span or quoted phrase of the original was dropped or changed. Alias: `/task-fit-md`.
+
+#### engineering/doc-writing
+
+Write-time discipline for any document another session will act on: every sentence about the present state is measured now (evidence on the same line) or written as a question — in scope, traps and acceptance clauses too, not only the pre-flight table; nothing is restated from memory; a status row read every turn holds only the current state and pushes history into an append-only file; emphasis markers are a budget; a read-back pass catches contradictions and lost negations. `check_doc_write.py` flags state claims without evidence, over-long rows and marker overload.
 
 #### engineering/orchestrator
 

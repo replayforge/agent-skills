@@ -1,7 +1,7 @@
 ---
 name: engineering-help
 description: >
-  Entry point for the engineering skill family: which of the eleven skills to
+  Entry point for the engineering skill family: which of the thirteen skills to
   load for the situation at hand, how they hand work to each other, and what
   each one refuses to do. Use when the user asks what skills are available,
   which one applies, how this workflow runs, or says "有哪些 skill",
@@ -12,7 +12,7 @@ license: MIT
 
 # Engineering Skills — which one, when
 
-Eleven skills. **One constitution, five roles, one about the documents, and four that drive the loop: a live board, a turn-taker, a dispatcher, a handoff.**
+Thirteen skills. **One constitution, five roles, three about the documents (their form, the act of writing them, fitting them for an outside reader), and four that drive the loop: a live board, a turn-taker, a dispatcher, a handoff.**
 
 ## Pick by what you are about to do
 
@@ -23,6 +23,8 @@ Eleven skills. **One constitution, five roles, one about the documents, and four
 | Build the thing one brief asks for | `engineering-implementation` |
 | Challenge somebody else's result | `engineering-verification` |
 | Write or fix a document another session will read | `engineering-project-records` |
+| Write a brief, prompt, register row or report — measure every present-tense sentence, keep status rows current-only | `engineering-doc-writing` |
+| Make a finished document readable for an outside reader (PM, new hire) | `engineering-doc-fit` |
 | Preserve a lesson outside this project | `engineering-knowledge-capture` |
 | Understand how the roles fit together | `engineering-work-flow` |
 | See what is running, waiting to be dispatched, or waiting on you | `engineering-stage-status` |
