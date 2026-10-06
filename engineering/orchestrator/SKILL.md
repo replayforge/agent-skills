@@ -8,7 +8,7 @@ description: >
   task graph, dependency direction, sequencing, and the ACCEPT / REJECT /
   BLOCKED decision. Use when acting as the coordinating session, or when the
   user says "總線", "寫任務書", "拆任務", "拆階段", "排優先序",
-  "下一步做什麼", "驗收這一輪", "這個專案現在在哪", "產生提示詞",
+  "下一步做什麼", "驗收這一輪", "這個專案現在在哪", "產生提示詞", "有什麼需要我的",
   "task brief", "split this work", "what should we do next". Do NOT use when
   you are the executor doing the actual work.
 argument-hint: "[brief|split|accept|audit]"
