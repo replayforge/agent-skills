@@ -6,7 +6,7 @@
          由來：任務書寫「SIGINT 既有測試照跑」並當成驗收條款，那個測試不存在。
   ROW    表格列超過 --row-limit 字元（預設 600）。狀態列疊歷史就是從這裡開始的。
          由來：階段表 140 列、249 K 字元，一列平均 1～2 千字，總線只讀得到片段。
-  MARK   一行有 4 個以上的強調標記（⚠🔴⛔⭐🔑🟡⏳🔒），或整份平均每行超過 1.0 個。
+  MARK   一行有 4 個以上的強調標記（⚠🔴⛔⭐🔑🟡⏳🔒），或整份（≥ 10 行）平均每行超過 1.0 個。
          由來：同一張表每行約 2 個標記，讀的人分不出哪條還有效。門檻依實測定：
          一般任務書每行 0.4～0.8 個，出問題的階段表 1.96。
 
@@ -49,7 +49,7 @@ def scan(lines, row_limit=600):
             hits.append(('ROW', no, f'{len(s)} 字元 > {row_limit}'))
         if n >= 4:
             hits.append(('MARK', no, f'{n} 個標記'))
-    if nonempty and marks / nonempty > 1.0:
+    if nonempty >= 10 and marks / nonempty > 1.0:   # 少於 10 行（只檢查新增的幾行）時密度沒有意義
         hits.append(('MARK', 0, f'整份 {marks}/{nonempty} = {marks / nonempty:.2f} 個標記／行 > 1.0'))
     return hits
 
@@ -63,8 +63,9 @@ def self_test():
     for s in bad:
         assert scan([s]), f'應該抓到：{s}'
     assert not [h for h in scan(good) if h[1]], scan(good)
-    assert scan(['⚠⚠ a', '⚠ b'])[-1][0] == 'MARK'        # 整份密度 1.5
-    assert not scan(['⚠ a', 'b'])                         # 0.5：一般任務書的密度，不報
+    assert scan(['⚠⚠ a', '⚠ b'] * 5)[-1][0] == 'MARK'    # 整份密度 1.5
+    assert not scan(['⚠ a', 'b'] * 5)                     # 0.5：一般任務書的密度，不報
+    assert not scan(['⚠ 🔴 新增的一行'])                   # 只檢查一行時不算整份密度
     print('self-test OK')
 
 
