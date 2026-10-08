@@ -557,6 +557,42 @@ Several open questions → number them and keep each self-contained, so a
 reply like "1 甲 2 照舊 3 一起修" is unambiguous. Never bundle a question
 inside a status report where it can be skimmed past.
 
+### Walking a user through a batch of questions
+
+When a report leaves several questions (a design proposal with six open
+items), ask them **one per message**, each marked with its position
+("Q3 of 6"), and register the answers together once the batch is done.
+The user in the reference project singled this shape out as the one to keep:
+
+1. **Plain-language background before the options.** What is wrong today,
+   with one concrete instance from the repository and the number that makes
+   it real ("one log line was 100,304 characters"). Then the options table.
+   End with how short the answer can be ("reply with one letter").
+2. **An answer that adds requirements gets restated, not just recorded.**
+   Write the additions back as a numbered "my understanding" list, invite
+   correction, and ask only the one follow-up that changes scope ("English
+   for every level, or only error?").
+3. **An answer that names a cost gets the cost located.** "This will turn
+   the code into a mess" — show where the mess actually comes from (logic
+   in every call site, timers) and the shape that avoids it (one file, one
+   pure function, no timers), then re-offer the options. The shape becomes
+   a hard constraint in the implementation brief, and say so.
+4. **An answer that reframes the purpose replaces the question.** When the
+   user says the whole category is unimportant and the real goal is X,
+   restate X, point out the one place where X and the old question collide
+   ("a crash also means the dealer cannot open a round"), and ask a revised
+   question with new options. Do not force the old options onto the new
+   frame.
+5. **An answer that does not map to the open question** answers what it
+   answers; re-ask the open one compactly — the short table only, no second
+   explanation.
+6. **Results before a decision: what you checked, then the table, then the
+   numbers behind the numbers.** Say which claims you re-ran yourself; give
+   the pre-registered criteria as a pass/fail table; then the caveats the
+   headline hides (half the hits were coincidence). A criterion that passes
+   or fails depending on an unspecified measure is shown both ways, not
+   resolved silently.
+
 ### "Is there anything you need from me?"
 
 Answer with **two lists, in this order**: what only the user can do (a
