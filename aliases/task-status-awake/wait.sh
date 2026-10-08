@@ -3,13 +3,18 @@
 # Meant for Bash run_in_background: one notification at the end, no model
 # turn per poll (unlike /loop).
 #
-#   wait.sh [--dispatch] [--until N[,M…]] [interval_s=180] [max_s=10800]
+#   wait.sh [--dispatch] [--until N[,M…]] [--stall] [interval_s=180] [max_s=10800]
 #
 # --dispatch  on every poll, first run stage-run (same caps as /task-run) so a
 #             freed slot is refilled with the next stage that has a prompt file.
 # --until     also wake as soon as one of these stages is no longer
 #             running/verifying (the user is waiting on that one), without
 #             waiting for the rest. Combine with --dispatch or run beside it.
+#             A named stage counts as finished only after this watcher has seen
+#             it running/verifying — a stage not dispatched yet is waited for.
+# --stall     also wake when a running/verifying row is marked "possibly stalled"
+#             (no file change for stale_minutes, set in .stage-status.json):
+#             a session that is busy but stuck, e.g. a test waiting forever.
 #
 # exit 0  nothing running/verifying any more
 # exit 3  a row is still running/verifying but its session went idle
@@ -18,12 +23,16 @@
 # exit 2  the board itself failed
 # exit 5  --dispatch, but another dispatching watcher already runs for this repo
 # exit 6  --until: one of the named stages finished (others may still run)
+# exit 7  --stall: a running/verifying row has had no file change for too long
 dispatch=0
 until_=""
+stall=0
+seen=" "
 while [[ "${1:-}" == --* ]]; do
   case "$1" in
     --dispatch) dispatch=1; shift ;;
     --until) until_="${2:?--until needs stage numbers}"; shift 2 ;;
+    --stall) stall=1; shift ;;
     *) echo "unknown option $1"; exit 2 ;;
   esac
 done
@@ -55,10 +64,22 @@ while :; do
   fi
   out="$(python3 "$board" 2>&1)" || { echo "board failed:"; echo "$out"; exit 2; }
   busy="$(printf '%s\n' "$out" | grep -E '^ +[0-9]+ +(running|verifying) ' || true)"
-  [[ -z "$busy" ]] && { echo "ALL DONE"; echo "$out"; exit 0; }
+  # --until: a named stage not seen running yet (not dispatched) keeps us waiting.
+  pending=""
   for n in ${until_//,/ }; do
-    printf '%s\n' "$busy" | grep -qE "^ +$n " || { echo "STAGE $n FINISHED"; echo "$out"; exit 6; }
+    [[ "$seen" == *" $n "* ]] || printf '%s\n' "$busy" | grep -qE "^ +$n " || pending=1
   done
+  [[ -z "$busy" && -z "$pending" ]] && { echo "ALL DONE"; echo "$out"; exit 0; }
+  for n in ${until_//,/ }; do
+    if printf '%s\n' "$busy" | grep -qE "^ +$n "; then
+      seen="$seen$n "
+    elif [[ "$seen" == *" $n "* ]]; then
+      echo "STAGE $n FINISHED"; echo "$out"; exit 6
+    fi
+  done
+  if (( stall )) && printf '%s\n' "$busy" | grep -q 'possibly stalled'; then
+    echo "STALLED (no file change for stale_minutes)"; echo "$out"; exit 7
+  fi
   # A verifying row lists the executor's session (idle, its work is done) next to
   # the verifier's (busy). Only a row with an idle session and no busy one is stuck.
   stuck="$(printf '%s\n' "$busy" | grep ':idle(' | grep -v ':busy(' || true)"
