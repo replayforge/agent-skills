@@ -30,3 +30,10 @@ license: MIT
    /compact 先讀 <path>；保留：<3–6 short items from step 3>
    ```
    Tell them that after compaction the next turn should begin by reading that file.
+
+**Optional auto-restore.** A `SessionStart` hook with matcher `compact` prints the file back into context after every compaction (manual or automatic), so step 4's "read it first" needs no reminder. In `~/.claude/settings.json`:
+```json
+{ "matcher": "compact", "hooks": [{ "type": "command", "timeout": 5,
+  "command": "f=\"$(git rev-parse --git-common-dir 2>/dev/null)/session-state.md\"; if [ -f \"$f\" ]; then echo \"session state (${f}):\"; cat \"$f\"; fi; exit 0" }] }
+```
+Write `${f}`, not `$f`, before non-ASCII text: bash reads the following multibyte character as part of the name.
