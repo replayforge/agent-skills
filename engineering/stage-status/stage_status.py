@@ -13,6 +13,8 @@ Conventions it assumes (override in <repo>/.stage-status.json):
         verdict         stage-<N>-<slug>-verify-result.md
   - every dispatched session works on its own branch + worktree:
         executor  s<N>      verifier  s<N>v
+    <N> may carry a one-letter suffix for follow-up rounds (298b, 313c); the
+    suffix is never "v", which is reserved for the verifier branch.
   - the orchestrator records verdicts in a register table whose rows start
     with "| <N> |" and carry a verdict marker (✅/🔴/⏸ + **ACCEPT/REJECT/BLOCKED**).
     Stages the orchestrator accepted itself have no verdict file, only this row.
@@ -43,10 +45,19 @@ DEFAULTS = {
     # worktree. Set to null to disable.
     "session_lister": ["claude", "agents", "--json"],
 }
-FILE = re.compile(r"^stage-(\d+)-.+?(-verify-result|-verify-prompt|-verify|-result|-prompt)?(-[A-Z])?\.md$")
+# A stage id is a number with an optional one-letter suffix for follow-up rounds
+# (298 → 298b → 298c). "v" is excluded: it is the verifier branch suffix.
+ID = r"\d+[a-uw-z]?"
+FILE = re.compile(r"^stage-(" + ID + r")-.+?(-verify-result|-verify-prompt|-verify|-result|-prompt)?(-[A-Z])?\.md$")
 SKIP_DIRS = {".git", "target", "node_modules", "dist", "build", ".venv"}
 OPEN = ("pending dispatch", "running", "verify pending dispatch", "verifying",
         "done, awaiting acceptance")
+
+
+def id_key(n):
+    """Sort and compare stage ids numerically: "9" < "88" < "298" < "298b"."""
+    m = re.match(r"(\d+)(.*)", n)
+    return (int(m.group(1)), m.group(2))
 
 
 def git(repo, *args):
@@ -73,7 +84,7 @@ def files_on(repo, ref, tasks_dir):
         m = FILE.match(os.path.basename(p))
         if m:
             kind = (m.group(2) or "-brief").lstrip("-")
-            out.setdefault(int(m.group(1)), {})[kind] = p
+            out.setdefault(m.group(1), {})[kind] = p
     return out
 
 
@@ -104,9 +115,9 @@ def registered(repo, cfg):
     marker = re.compile(cfg["verdict_marker"])
     out = set()
     for line in text.splitlines():
-        m = re.match(r"^\| *(\d+) *\|", line)
+        m = re.match(r"^\| *(" + ID + r") *\|", line)
         if m and marker.search(line):
-            out.add(int(m.group(1)))
+            out.add(m.group(1))
     return out
 
 
@@ -162,16 +173,16 @@ def board(repo, cfg, show_all=False):
     live = sessions(cfg)
     reg = registered(repo, cfg)
     main_files = files_on(repo, main, cfg["tasks_dir"])
-    ex = re.compile("^" + re.escape(cfg["executor_branch"]).replace(r"\{n\}", r"(\d+)") + "$")
-    vf = re.compile("^" + re.escape(cfg["verifier_branch"]).replace(r"\{n\}", r"(\d+)") + "$")
+    ex = re.compile("^" + re.escape(cfg["executor_branch"]).replace(r"\{n\}", "(" + ID + ")") + "$")
+    vf = re.compile("^" + re.escape(cfg["verifier_branch"]).replace(r"\{n\}", "(" + ID + ")") + "$")
     nums = set(main_files)
     for b in branches:
         m = ex.match(b) or vf.match(b)
         if m:
-            nums.add(int(m.group(1)))
+            nums.add(m.group(1))
 
     rows = []
-    for n in sorted(nums):
+    for n in sorted(nums, key=id_key):
         e, v = cfg["executor_branch"].format(n=n), cfg["verifier_branch"].format(n=n)
         # Main first; a document only on a branch means "done but not merged yet".
         found = dict(main_files.get(n, {}))
@@ -211,7 +222,7 @@ def board(repo, cfg, show_all=False):
 
         has_branch = e in branches or v in branches
         if not show_all and (state == "closed" or
-                             (not has_branch and n < cfg["hide_branchless_below"])):
+                             (not has_branch and id_key(n)[0] < cfg["hide_branchless_below"])):
             continue
 
         act = None
@@ -244,7 +255,7 @@ def main():
         print("(no open stages)")
         return
     print(f"repo {repo}  main {cfg['main_branch']}")
-    print(f"{'#':>4}  {'state':<28} {'unmerged':<14} activity")
+    print(f"{'#':>5}  {'state':<28} {'unmerged':<14} activity")
     print("-" * 78)
     for r in rows:
         a = r["activity"]
@@ -258,7 +269,7 @@ def main():
         if r["sessions"]:
             act += ("  " if act else "") + "session " + ", ".join(
                 f"{k}:{v['status']}({v['id']})" for k, v in r["sessions"].items())
-        print(f"{r['stage']:>4}  {r['state']:<28} {','.join(r['unmerged']) or '-':<14} {act}")
+        print(f"{r['stage']:>5}  {r['state']:<28} {','.join(r['unmerged']) or '-':<14} {act}")
     print("\n⚠ 'pending dispatch' may still be a session opened outside the session lister (e.g. an IDE panel).")
     print("⚠ A fresh worktree's change time is its creation time: recent ≠ progress.")
 
