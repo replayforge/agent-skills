@@ -75,7 +75,9 @@ In `<repo>/.stage-status.json` under `"run"`:
 |---|---|
 | `launcher` | `["claude", "--bg", "-n", "{name}", "--permission-mode", "bypassPermissions", "{prompt}"]` (cwd = repo root) |
 | `max_parallel` / `max_crate` / `max_merge` | 3 / 1 / 1 |
-| `background_note` | appended to every prompt: no human is watching — write open questions into the report and stop; commit only your own files; do not push |
+| `background_note` | appended to every prompt: no human is watching — no interactive question/menu tool; take the brief's default and report it, or write the open question into the report and stop; commit only your own files; do not push |
+
+⚠ **Dispatching by hand skips `background_note`.** A `claude --bg` typed directly (or from another script) sends only the prompt file. In the reference project an executor launched that way opened a question menu mid-run ("cap the lock or not?") and sat there until the orchestrator happened to look; the menu waits for a human who is not there. Launch through this tool, or end the prompt file itself with the same note.
 
 ⚠ **`bypassPermissions` is a real decision.** A background session has nobody to approve a permission prompt, so it would otherwise stall. Use it only where the user has chosen it, and keep the prompt's own limits (worktree, no push, read-only paths) — they are the remaining guard.
 

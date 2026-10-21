@@ -36,8 +36,10 @@ RUN_DEFAULTS = {
     # Appended to every prompt: a background session has nobody to answer it.
     "background_note": (
         "\n\n---\nYou are running as a background session with no human watching. "
-        "Do not wait for answers: if you hit a decision that belongs to the user or "
-        "the orchestrator, write it into your report as an open question and stop. "
+        "Do not wait for answers, and do not use an interactive question or menu tool "
+        "(nobody will ever answer it; the session just stops): if you hit a decision that "
+        "belongs to the user or the orchestrator, take the default the brief or project "
+        "rules give and list it in your report, or write it as an open question and stop. "
         "Commit only your own files; do not push."
     ),
 }

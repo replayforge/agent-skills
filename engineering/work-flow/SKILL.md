@@ -257,7 +257,11 @@ Dependencies already verified:
 
 Re-verify the brief's facts and numbers yourself.
 Follow the report contract in <location>.
+No human is watching: do not ask and wait (no question menus). Take the
+brief's default and report it, or report the open question and stop.
 ```
+
+A background session that asks a question stops until someone reads it — usually hours. The usual cause is the brief, not the executor: two clauses that cannot both hold (in the reference project, "copy the legacy lock exactly" next to "no lock may outlive the 15-second fuse", where the legacy lock had no limit). Check for that pair before dispatch (`../orchestrator/SKILL.md` §4, question 2).
 
 ## 8. Return contracts
 
