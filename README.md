@@ -185,7 +185,7 @@ cd agent-skills && ./install.sh        # links engineering/* and aliases/* into 
 git pull                                # later: updates every install at once (symlinks)
 ```
 
-Then restart the agent. Short commands `/task-status`, `/task-next`, `/task-run`, `/task-new-bus`, `/task-session-update` come from `aliases/` and work in any project.
+Then restart the agent. Short commands `/task-status`, `/task-next`, `/task-run`, `/task-new-bus`, `/task-session-update`, `/task-continue`, `/task-night` (overnight wake-ups after a usage limit) come from `aliases/` and work in any project.
 
 | Needs | For |
 |---|---|
