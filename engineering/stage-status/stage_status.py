@@ -115,7 +115,8 @@ def registered(repo, cfg):
     marker = re.compile(cfg["verdict_marker"])
     out = set()
     for line in text.splitlines():
-        m = re.match(r"^\| *(" + ID + r") *\|", line)
+        # 編號後面可以接標記（例 `| 291 💰 |`），但不能接數字或字母（`2911` 不算 291）
+        m = re.match(r"^\| *(" + ID + r")(?![0-9a-z])[^|]*\|", line)
         if m and marker.search(line):
             out.add(m.group(1))
     return out
